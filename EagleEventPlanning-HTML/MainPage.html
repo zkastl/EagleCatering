@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Eagle Event Planning</title>
+<link rel="stylesheet" type="text/css" href="style.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+</head>
+<body>
+<script>
+$(document).ready(function() {
+$("#Home").submit(function()){
+			statusCode: {
+			200: function(response) {
+// 				  document.cookie="token=" + response.responseText;
+// 				  $("#page-message").html("Logged in");
+// 				  window.location.assign("student-list.html");
+		  		},
+		  	406: function(response) {
+// 		  		var errors = response.responseJSON;
+// 		  		$(".error").html("*");
+// 		  		$.each(errors, function (i, message) {
+// 		  			$("#"+message.attributeName+"Err").html(message.message);
+// 		  			console.log("Error "+message.attributeName +" "+message.message)
+//     	        		});
+// 		  		$("#page-message").html("Username and password not found");
+		  		},
+		  	
+			404 : function(jqXHR, textStatus, errorThrown) {
+// 				$("#page-message").html("Error:"+textStatus);
+// 				consule.log(errorThrown);
+// 	  	        console.log("error " + textStatus);
+// 	  	        console.log("incoming Text " + jqXHR.responseText);
+	  	      	}
+			}
+			});
+
+		e.preventDefault();
+});
+});
+</script>
+
+<div>
+	<h1>Eagle Event Planning</h1>
+	<div style="color: white; background: gray; width: 100%; font-size: 12;">
+		<input id="Home" value="Home" type="button" style="color: white; background: gray;">
+		<input id="Contact" value="Contact" type="button" style="color: white; background: gray;">
+		<input id="Login" value="Login" type="button" style="color: white; background: gray;">
+	</div>
+	<div style="background-image: url(''); font-size: 18; height: " align="center">
+		<div style="background: white; width: 70%; height: 300px">
+			<h3><br/>Eagle Event Planning and Catering<br/><font size="2em">Award Winning Event Planning<br/>Get the Personal and Effective Approach</font></h3>
+		</div>
+	</div>
+</div>
+</body>
+</html>
