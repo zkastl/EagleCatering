@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Eagle Event Planning</title>
+<link rel="stylesheet" type="text/css" href="style.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+</head>
+<body>
+<script>
+function goHome() {
+	window.location.assign("MainPage.html");
+}
+function goToContact() {
+	window.location.assign("ContactInfo.html");
+}
+function goToLogin() {
+	window.location.assign("Login.html");
+}
+</script>
+
+<h1>Eagle Event Planning</h1>
+<div style="color: white; background: gray; width: 100%; font-size: 12;">
+	<input id="Home" value="Home" type="button" onclick="goHome()" style="color: white; background: gray;">
+	<input id="Contact" value="Contact" type="button" onclick="goToContact()" style="color: white; background: gray;">
+	<input id="Login" value="Login" type="button" onclick="goToLogin()" style="color: white; background: gray;">
+</div>
+
+<div align="center">
+	<form style="background: white; width: 80%; height: 300px;" id="loginForm" method="post">
+		<h2> Planner Login</h2><br>
+		<span id="loginError" class="error"></span>
+		Username: <input type="text" id="userName">
+		<br><br>
+		Password: <input type="text" id="password">
+		<br><br>
+		<input type="submit" name="login" value="Login">
+	</form>
+</div>
+
+<script>
+$(document).ready(function() {
+$("#loginForm").submit(function (e){
+		var userName = $('#userName').val();
+		var password = $('#password').val();
+
+// 		$.ajax( { 
+// 			url:"/SchoolRestJPASecure/system/systemservices/login/",
+// 			type: "POST",
+// 			dataType: "json",
+// 			contentType: "application/json",
+// 			data: '{'+  
+// 				'"userName" : "'+userName+'",'+
+// 				'"password" : "'+password+'"'+
+// 			"}",
+// 			statusCode: {
+// 			200: function(response) {
+// 				  document.cookie="token=" + response.responseText;
+// 				  $("#page-message").html("Logged in");
+// 				  window.location.assign("student-list.html");
+// 		  		},
+// 		  	406: function(response) {
+// 		  		var errors = response.responseJSON;
+// 		  		$(".error").html("*");
+// 		  		$.each(errors, function (i, message) {
+// 		  			$("#"+message.attributeName+"Err").html(message.message);
+// 		  			console.log("Error "+message.attributeName +" "+message.message)
+//     	        		});
+// 		  		$("#page-message").html("Username and password not found");
+// 		  		},
+		  	
+// 			404 : function(jqXHR, textStatus, errorThrown) {
+// 				$("#page-message").html("Error:"+textStatus);
+// 				consule.log(errorThrown);
+// 	  	        console.log("error " + textStatus);
+// 	  	        console.log("incoming Text " + jqXHR.responseText);
+// 	  	      	}
+// 			}
+// 			});
+
+		e.preventDefault();
+});
+});
+</script>
+</body>
+</html>
