@@ -47,7 +47,32 @@ public class GA {
 	}
 
 	private static Layout crossover(Layout mother, Layout father) {
-		return mother;
+		
+		// Get the count of the layouts		
+		// really hope this pass-by-value
+		Random rand = new Random();
+		int numberChromosomesToSelect = Math.floorDiv(mother.getGuests().size(), 2);
+		for(int i = 0; i < numberChromosomesToSelect; i++)
+		{
+			// select a random number
+			int r = rand.nextInt(numberChromosomesToSelect);
+			Guest f_guest, m_guest;
+			for (Guest gg : mother.getGuests()) {
+				if( gg.guestNumber == r) {
+					m_guest = gg;
+					break;
+				}
+			}
+			for (Guest gg : father.getGuests()) {
+				if( gg.guestNumber == r) {
+					f_guest = gg;
+					break;
+				}
+			}
+			
+		}
+		
+		return null;
 	}
 
 	private static Layout rouletteSelection(List<Layout> population) {
