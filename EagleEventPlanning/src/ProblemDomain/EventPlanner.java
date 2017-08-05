@@ -144,4 +144,8 @@ public class EventPlanner implements Serializable {
 		return true;
 	}
 
+	public boolean authenticate(String password) {
+		return this.password.equals(password);
+	}
+
 }

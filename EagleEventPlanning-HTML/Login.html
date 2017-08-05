@@ -44,39 +44,40 @@ $("#loginForm").submit(function (e){
 		var userName = $('#userName').val();
 		var password = $('#password').val();
 
-// 		$.ajax( { 
-// 			url:"/SchoolRestJPASecure/system/systemservices/login/",
-// 			type: "POST",
-// 			dataType: "json",
-// 			contentType: "application/json",
-// 			data: '{'+  
-// 				'"userName" : "'+userName+'",'+
-// 				'"password" : "'+password+'"'+
-// 			"}",
-// 			statusCode: {
-// 			200: function(response) {
-// 				  document.cookie="token=" + response.responseText;
-// 				  $("#page-message").html("Logged in");
-// 				  window.location.assign("student-list.html");
-// 		  		},
-// 		  	406: function(response) {
-// 		  		var errors = response.responseJSON;
-// 		  		$(".error").html("*");
-// 		  		$.each(errors, function (i, message) {
-// 		  			$("#"+message.attributeName+"Err").html(message.message);
-// 		  			console.log("Error "+message.attributeName +" "+message.message)
-//     	        		});
-// 		  		$("#page-message").html("Username and password not found");
-// 		  		},
+		$.ajax( { 
+			url:"/EagleEventPlannning/system/system/login/",
+			type: "POST",
+			dataType: "json",
+			contentType: "application/json",
+			data: '{'+  
+				'"userName" : "'+userName+'",'+
+				'"password" : "'+password+'"'+
+			"}",
+			statusCode: {
+			200: function(response) {
+				  document.cookie="token=" + response.responseText;
+				  $("#page-message").html("Logged in");
+				  // TODO send to appropriate page
+				  window.location.assign("MainPage.html");
+		  		},
+		  	406: function(response) {
+		  		var errors = response.responseJSON;
+		  		$(".error").html("*");
+		  		$.each(errors, function (i, message) {
+		  			$("#"+message.attributeName+"Err").html(message.message);
+		  			console.log("Error "+message.attributeName +" "+message.message)
+    	        		});
+		  		$("#page-message").html("Username and password not found");
+		  		},
 		  	
-// 			404 : function(jqXHR, textStatus, errorThrown) {
-// 				$("#page-message").html("Error:"+textStatus);
-// 				consule.log(errorThrown);
-// 	  	        console.log("error " + textStatus);
-// 	  	        console.log("incoming Text " + jqXHR.responseText);
-// 	  	      	}
-// 			}
-// 			});
+			404 : function(jqXHR, textStatus, errorThrown) {
+				$("#page-message").html("Error:"+textStatus);
+				consule.log(errorThrown);
+	  	        console.log("error " + textStatus);
+	  	        console.log("incoming Text " + jqXHR.responseText);
+	  	      	}
+			}
+			});
 
 		e.preventDefault();
 });
