@@ -4,6 +4,13 @@
 	version="2.0" xmlns="http://java.sun.com/xml/ns/persistence">
 
     <persistence-unit name="School" transaction-type="RESOURCE_LOCAL">
+    <class>ProblemDomain.Client</class>
+    <class>ProblemDomain.Event</class>
+    <class>ProblemDomain.EventPlanner</class>
+    <class>ProblemDomain.Guest</class>
+    <class>ProblemDomain.SeatingArrangement</class>
+    <class>ProblemDomain.Table</class>
+    <class>ProblemDomain.Token</class>
          
         <properties>
             <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
