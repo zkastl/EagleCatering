@@ -42,8 +42,8 @@ function goToLogin() {
 $(document).ready(function() {
 $("#loginForm").submit(function (e){
 		var userName = $('#userName').val();
-		var password = $('#password').val();
-
+        var password = $('#password').val();
+        alert("LOGIN BUTTON PRESSED");
 		$.ajax( { 
 			url:"/EagleEventPlanning/system/login/",
 			type: "POST",

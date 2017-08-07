@@ -75,8 +75,9 @@ public class SystemService {
 		return token.getToken();
 	}
 	
-	
+	@POST
 	@Path("/events")
+	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.TEXT_PLAIN)
 	public Layout getLayout(String guestList) throws Exception {
 		Event t = new Event();
