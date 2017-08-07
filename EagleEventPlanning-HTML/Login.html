@@ -27,7 +27,7 @@ function goToLogin() {
 </div>
 
 <div align="center">
-	<form style="background: white; width: 80%; height: 300px;" id="loginForm" method="post">
+	<form style="background: white; width: 80%; height: 300px;"  id="loginForm" method="post">
 		<h2> Planner Login</h2><br>
 		<span id="loginError" class="error"></span>
 		Username: <input type="text" id="userName">
@@ -45,7 +45,7 @@ $("#loginForm").submit(function (e){
 		var password = $('#password').val();
 
 		$.ajax( { 
-			url:"/EagleEventPlannning/system/login/",
+			url:"/EagleEventPlanning/system/login/",
 			type: "POST",
 			dataType: "json",
 			contentType: "application/json",
