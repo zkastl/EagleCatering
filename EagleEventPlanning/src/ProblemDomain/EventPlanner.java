@@ -23,7 +23,7 @@ public class EventPlanner implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long eventPlannerId;
 
-	@Column(name = "name", nullable = false, length = 20)
+	@Column(name = "name", nullable = false, length = 50)
 	private String name;
 
 	@Column(name = "phoneNumber", nullable = false, length = 10)

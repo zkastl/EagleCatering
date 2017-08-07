@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -56,6 +57,7 @@ public class Event implements Serializable {
 	@Column(name = "emptySeatsPerTable", nullable = false)
 	private Integer emptySeatsPerTable;
 
+	@Transient
 	private SeatingArrangement seatingArrangement;
 
 	@Column(name = "minFitness", nullable = false)
@@ -156,6 +158,7 @@ public class Event implements Serializable {
 	}
 
 	public Boolean addGuest(Guest guest) {
+		guest.eventID = this.eventId;
 		guestList.put(guest.getName(), guest);
 		GuestDAO.addGuest(guest);
 		return true;
@@ -196,7 +199,7 @@ public class Event implements Serializable {
 	}
 
 	@XmlElement
-	public void setTableSize(SeatingArrangement seatingArrangement) {
+	public void setSeatingArrangement(SeatingArrangement seatingArrangement) {
 
 		this.seatingArrangement = seatingArrangement;
 	}
