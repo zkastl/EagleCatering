@@ -26,54 +26,34 @@ function goToLogin() {
 	<input id="Login" value="Login" type="button" onclick="goToLogin()" style="color: white; background: gray;">
 </div>
 
-<div>
-	
-<script>
-$(document).ready(function() {
-$("#loginForm").submit(function (e){
-		var userName = $('#userName').val();
-		var password = $('#password').val();
+<div align="center" style="background: white; width:75%; font-size: 12;">
+    <form id='uploadcsv' method='post' action="">
+        <input id="fileupload" name="myfile" type="file" /><br />
+        <input type="submit" value="submit" id="submit" />
+    </form>
+    <script>
+        $(document).ready(function () {
+            $("#fileupload").submit(function (e) {
 
-		$.ajax( { 
-			url:"/EagleEventPlanning/system/login/",
-			type: "POST",
-			dataType: "json",
-			contentType: "application/json",
-			data: '{'+  
-				'"userName" : "'+userName+'",'+
-				'"password" : "'+password+'"'+
-			"}",
-			statusCode: {
-			200: function(response) {
-				  document.cookie="token=" + response.responseText;
-				  $("#page-message").html("Logged in");
-				  // TODO send to appropriate page
-				  window.location.assign("MainPage.html");
-		  		},
-		  	406: function(response) {
-		  		var errors = response.responseJSON;
-		  		$(".error").html("*");
-		  		$.each(errors, function (i, message) {
-		  			$("#"+message.attributeName+"Err").html(message.message);
-		  			console.log("Error "+message.attributeName +" "+message.message)
-    	        		});
-		  		$("#page-message").html("Username and password not found");
-		  		},
-		  	
-			404 : function(jqXHR, textStatus, errorThrown) {
-				$("#page-message").html("Error:"+textStatus);
-				consule.log(errorThrown);
-	  	        console.log("error " + textStatus);
-	  	        console.log("incoming Text " + jqXHR.responseText);
-	  	      	}
-			}
-			});
-
-		e.preventDefault();
-});
-});
-</script>
-
+                $.ajax({
+                    url: "/EagleEventPlanning/system/event/",
+                    type: "POST",
+                    dataType: "csv",
+                    contentType: "application/csv",
+                    data: "header1,header2\ndata1,data2",
+                    statusCode: {
+                        200: function (response) {
+                            $("#providersFormElementsTable")
+                                .html("<tr><td>Nickname</td><td><input type='text' id='nickname' name='nickname'></td></tr><tr><td>CA Number</td><td><input type='text' id='account' name='account'></td></tr>");
+                        },
+                        404 : function (response) {
+                            console.log("404 errored");
+                        }
+                        }
+                    });
+            })
+        });
+    </script>
 </div>
 </body>
 </html>
