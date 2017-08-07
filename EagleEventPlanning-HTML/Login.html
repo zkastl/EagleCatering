@@ -32,7 +32,7 @@ function goToLogin() {
 		<span id="loginError" class="error"></span>
 		Username: <input type="text" id="userName">
 		<br><br>
-		Password: <input type="text" id="password">
+		Password: <input type="password" id="password">
 		<br><br>
 		<input type="submit" name="login" value="Login">
 	</form>
@@ -57,7 +57,7 @@ $("#loginForm").submit(function (e){
 			200: function(response) {
 				  document.cookie="token=" + response.responseText;
 				  $("#page-message").html("Logged in");
-				  // TODO send to appropriate page
+                  // TODO send to appropriate page
 				  window.location.assign("MainPage.html");
 		  		},
 		  	406: function(response) {

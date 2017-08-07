@@ -265,7 +265,7 @@ public class Event implements Serializable {
 		// TODO
 	}
 	
-	public void importGuests() {
+	public void importGuests(String csvFile) {
 		JFileChooser chooser=new JFileChooser();
 		chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 		chooser.showOpenDialog(null);

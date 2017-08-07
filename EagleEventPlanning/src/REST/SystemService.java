@@ -1,5 +1,7 @@
 package REST;
 
+import java.util.ArrayList;
+
 import javax.persistence.EntityTransaction;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -11,12 +13,15 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
 import DataAccessObjects.EM;
+import ProblemDomain.Event;
 //import schoolPD.Student;
 //import schoolUT.Message;
 import ProblemDomain.EventPlanner;
+import ProblemDomain.Guest;
 //import systemPD.RoleAssignment;
 import ProblemDomain.System;
 import ProblemDomain.Token;
+import TableSorter.Layout;
 
 @Path("/system")
 public class SystemService {
@@ -68,6 +73,15 @@ public class SystemService {
 		token.save();
 		userTransaction.commit();
 		return token.getToken();
+	}
+	
+	
+	@Path("/events")
+	@Produces(MediaType.TEXT_PLAIN)
+	public Layout getLayout(String guestList) throws Exception {
+		Event t = new Event();
+		t.importGuests(guestList);
+		return Layout.createRandomTableLayout((ArrayList<Guest>)t.getGuestList().values(), 8, 2);
 	}
 	//
 	// @Secured({Role.Admin})
