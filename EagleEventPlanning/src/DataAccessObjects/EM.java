@@ -10,7 +10,7 @@ public class EM {
 	static EntityManager em;
 
 	private static void initEM() {
-		entityManagerFactory = Persistence.createEntityManagerFactory("EagleCatering");
+		entityManagerFactory = Persistence.createEntityManagerFactory("EagleEventPlanning");
 		em = entityManagerFactory.createEntityManager();
 	}
 
