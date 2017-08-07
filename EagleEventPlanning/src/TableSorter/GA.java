@@ -10,16 +10,14 @@ import ProblemDomain.Guest;
 
 public class GA {
 
-	private static int POPULATION_SIZE;
-	private static double MUTATION_RATE;
-	private static double DEATH_RATE;
-	private static int FITNESS_THRESHOLD;
+	private static int POPULATION_SIZE = 40;
+	private static double MUTATION_RATE = 0.1;
+	private static double DEATH_RATE = 0.15;
+	private static int FITNESS_THRESHOLD = 1000;
+	private static int MAX_GENERATIONS = 2000;
+	private static Random random = new Random();
 
 	private GA() {
-		POPULATION_SIZE = 100;
-		MUTATION_RATE = 0.05;
-		DEATH_RATE = 0.1;
-		FITNESS_THRESHOLD = 100000;
 	}
 
 	private static List<Layout> breed(List<Layout> population, double deathRate) {
@@ -51,28 +49,38 @@ public class GA {
 		// Get the count of the layouts		
 		// really hope this pass-by-value
 		Random rand = new Random();
-		int numberChromosomesToSelect = Math.floorDiv(mother.getGuests().size(), 2);
+		Layout child = new Layout(mother.tableList);		
+		int numberChromosomesToSelect = Math.floorDiv(child.getGuests().size(), 2);
+		
 		for(int i = 0; i < numberChromosomesToSelect; i++)
 		{
 			// select a random number
 			int r = rand.nextInt(numberChromosomesToSelect);
-			Guest f_guest, m_guest;
-			for (Guest gg : mother.getGuests()) {
-				if( gg.guestNumber == r) {
-					m_guest = gg;
-					break;
-				}
-			}
-			for (Guest gg : father.getGuests()) {
-				if( gg.guestNumber == r) {
-					f_guest = gg;
-					break;
-				}
-			}
+			Guest selectedGuest = null, fathersGuest = null, swappedGuest = null;
 			
+			for (Guest g : child.getGuests())
+				if(g.guestNumber == r)
+					selectedGuest = g;
+			
+			for (Guest g : father.getGuests())
+				if(g.guestNumber == r)
+					fathersGuest = g;
+			
+			for (Guest g : child.getGuests())
+				if(g.tableNumber == fathersGuest.tableNumber)
+					swappedGuest = g;
+					
+			Guest backupGuest = selectedGuest;
+			selectedGuest = swappedGuest;
+			swappedGuest = backupGuest;
+			
+			int backupNumber = selectedGuest.tableNumber;
+			selectedGuest.tableNumber = swappedGuest.tableNumber;
+			swappedGuest.tableNumber = backupNumber;					
 		}
 		
-		return null;
+		child.evaluateFitness();
+		return child;
 	}
 
 	private static Layout rouletteSelection(List<Layout> population) {
@@ -100,7 +108,7 @@ public class GA {
 	}
 
 	public static void runGA(ArrayList<Guest> guests, int tableCapacity, int emptySeats) throws Exception {
-
+		
 		ArrayList<Layout> population = new ArrayList<Layout>();
 		Layout maxFit = null;
 
@@ -141,8 +149,20 @@ public class GA {
 	}
 
 	private static void mutateGenome(Layout layout) {
-		// TODO Auto-generated method stub
-
+		
+		Guest a = null, b = null;
+		while (a == b) {
+			a = layout.getGuests().get(random.nextInt(layout.getGuests().size()));
+			b = layout.getGuests().get(random.nextInt(layout.getGuests().size()));
+		}
+				
+		Guest backupGuest = a;
+		a = b;
+		b = backupGuest;
+		
+		int backupNumber = a.tableNumber;
+		a.tableNumber = b.tableNumber;
+		b.tableNumber = backupNumber;	
 	}
 
 }

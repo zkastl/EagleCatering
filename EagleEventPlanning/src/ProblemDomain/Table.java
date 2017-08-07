@@ -7,8 +7,8 @@ public class Table {
 
 	public int tableNumber;
 	public List<Guest> seatedGuests;
-	int capacity;
-	int numberOfEmptySeats;
+	public int capacity;
+	public int numberOfEmptySeats;
 
 	public Table(int tableNumber, int capacity, int emptySeats) {
 		this.tableNumber = tableNumber;
@@ -18,7 +18,7 @@ public class Table {
 	}
 
 	public boolean addGuest(Guest guest) {
-		if (seatedGuests.size() < capacity) {
+		if (seatedGuests.size() < capacity - numberOfEmptySeats) {
 			seatedGuests.add(guest);
 			seatedGuests.get(seatedGuests.size() - 1).tableNumber = tableNumber;
 			return true;

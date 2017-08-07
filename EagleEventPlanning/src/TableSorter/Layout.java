@@ -14,7 +14,7 @@ public class Layout {
 
 	public Layout(List<Table> tableList) {
 		this.tableList = tableList;
-		fitnessScore = 0;
+		fitnessScore = evaluateFitness();
 	}
 
 	public List<Guest> getGuests() {
@@ -61,28 +61,30 @@ public class Layout {
 		if (tableList.size() == 0)
 			return 0;
 
-		int fs = 0;
+		this.fitnessScore = 0;
+		Table guestTable = null;
+		ArrayList<Guest> goodNeighbors = new ArrayList<Guest>();
+		ArrayList<Guest> badNeighbors = new ArrayList<Guest>();
+		
 		for (Guest guest : getGuests()) {
-
-			List<Guest> goodNeighbors = new ArrayList<Guest>();
-			List<Guest> badNeighbors = new ArrayList<Guest>();
-
-			for (Guest g : getGuests()) {
-				if (guest.sameTable.contains(g.guestNumber))
-					goodNeighbors.add(g);
-				else if (guest.notSameTable.contains(g.guestNumber))
-					badNeighbors.add(g);
+			for(Table t : this.tableList) {
+				if (t.tableNumber == guest.tableNumber){
+					guestTable = t;
+					break;
+				}			
 			}
-
-			for (Guest g : goodNeighbors)
-				fs += (tableList.size() - Math.abs(guest.tableNumber - g.tableNumber));
-
-			for (Guest b : badNeighbors)
-				fs += Math.abs(guest.tableNumber - b.tableNumber);
+			
+			for(Guest neighbor : guestTable.seatedGuests)
+				if(guest.sameTable.contains(neighbor))
+					goodNeighbors.add(neighbor);
+			this.fitnessScore += 1000 * goodNeighbors.size();
+			
+			for(Guest neighbor : guestTable.seatedGuests)
+				if(guest.notSameTable.contains(neighbor))
+					badNeighbors.add(neighbor);
+			this.fitnessScore -= badNeighbors.size();
 		}
-
-		this.fitnessScore = fs;
-		return fitnessScore;
+		return this.fitnessScore;
 	}
 
 	public void printLayout() {
