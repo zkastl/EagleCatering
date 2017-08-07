@@ -9,7 +9,6 @@
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="lib" path="C:/Users/zkast/git/EagleCatering/EagleEventPlanning/WebContent/WEB-INF/lib/aopalliance-repackaged-2.5.0-b32.jar"/>
-	<classpathentry kind="lib" path="C:/Users/zkast/git/EagleCatering/EagleEventPlanning/WebContent/WEB-INF/lib/eclipselink.jar"/>
 	<classpathentry kind="lib" path="C:/Users/zkast/git/EagleCatering/EagleEventPlanning/WebContent/WEB-INF/lib/genson-1.4.jar"/>
 	<classpathentry kind="lib" path="C:/Users/zkast/git/EagleCatering/EagleEventPlanning/WebContent/WEB-INF/lib/hk2-api-2.5.0-b32.jar"/>
 	<classpathentry kind="lib" path="C:/Users/zkast/git/EagleCatering/EagleEventPlanning/WebContent/WEB-INF/lib/hk2-locator-2.5.0-b32.jar"/>

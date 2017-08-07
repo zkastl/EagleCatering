@@ -37,7 +37,7 @@ public class Guest implements Serializable {
 	@Column(name = "eventID", nullable = false)
 	public int eventID;
 	
-	@Column(name = "guestNumber", nullable = false, length = 40)
+	@Column(name = "comments", nullable = false, length = 40)
 	public String comments;
 
 	public Guest(int guestNumber, String firstName, String lastName, List<Integer> sameTable,

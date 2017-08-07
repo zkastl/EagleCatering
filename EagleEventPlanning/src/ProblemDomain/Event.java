@@ -1,7 +1,9 @@
 package ProblemDomain;
 
+import java.io.FileReader;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -15,8 +17,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
+import javax.swing.JFileChooser;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+// I used the jar from the zip at https://examples.javacodegeeks.com/core-java/sql/import-csv-file-to-mysql-table-java-example/
+// seems like it's the current one from https://sourceforge.net/projects/opencsv/ even though the article was 3 years ago and opencsv was updated two days ago
+import com.opencsv.CSVReader;
 
 import DataAccessObjects.EventDAO;
 import DataAccessObjects.GuestDAO;
@@ -256,5 +263,81 @@ public class Event implements Serializable {
 
 	public void printPlaceCards() {
 		// TODO
+	}
+	
+	public void importGuests() {
+		JFileChooser chooser=new JFileChooser();
+		chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+		chooser.showOpenDialog(null);
+
+		//String path=chooser.getSelectedFile().getAbsolutePath();
+		String filename=chooser.getSelectedFile().getName();
+		
+		try (CSVReader reader = new CSVReader(new FileReader(filename), ',');)
+		{
+				String[] rowData = null;
+				ArrayList<String> rowHeader = new ArrayList<String>();
+				boolean firstLine = true;
+				int i = 0;
+				int guestNumber = -1;
+				String firstName = "";
+				String lastName = "";
+				ArrayList<Integer> sameTable = new ArrayList<Integer>();
+				ArrayList<Integer> notSameTable = new ArrayList<Integer>();
+				int tableNumber = -1;
+				String comments = "";
+				
+				while((rowData = reader.readNext()) != null){
+					for (String data : rowData)
+					{
+						// the first line of the file is column headers	
+						if(firstLine) {
+							rowHeader.add(data);
+						} else { // set the appropriate field
+							switch(rowHeader.get(i)) {
+							case "guestNumber":
+								guestNumber = Integer.parseInt(data);
+							case "firstName":
+								firstName = data;
+							case "lastName":
+								lastName = data;
+							case "sameTable":
+								sameTable.add(Integer.parseInt(data));
+							case "notSameTable":
+								notSameTable.add(Integer.parseInt(data));
+							case "tableNumber":
+								tableNumber = Integer.parseInt(data);
+							case "comments":
+								comments = data;
+							}
+							
+							// move to the next column
+							i++;
+							// when you reach the end of a row add the guest, return to the first header index, and sanitize the fields
+							if(i == rowHeader.size()) {
+								Guest currentGuest = new Guest(guestNumber, firstName, lastName, sameTable, notSameTable, tableNumber, eventId, comments);
+								addGuest(currentGuest);
+								i = 0;
+								guestNumber = -1;
+								firstName = "";
+								lastName = "";
+								sameTable.clear();
+								notSameTable.clear();
+								tableNumber = -1;
+								comments = "";
+							}
+						}
+					}
+					
+					if(firstLine) {
+						firstLine = false;
+					}
+				}
+				java.lang.System.out.println("Data Successfully Uploaded");
+		}
+		catch (Exception e)
+		{
+				e.printStackTrace();
+		}
 	}
 }

@@ -8,13 +8,11 @@ import ProblemDomain.Guest;
 public class GuestDAO {
 
 	public static void addGuest(Guest guest) {
-		// TODO Auto-generated method stub
-
+		EM.getEM().persist(guest);
 	}
 
 	public static void removeGuest(Guest guest) {
-		// TODO Auto-generated method stub
-
+		EM.getEM().remove(guest);
 	}
 
 	public static List<Guest> getAllGuestsForEvent(Event event, int page, int perPage) {
