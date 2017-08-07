@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
 	version="2.0" xmlns="http://java.sun.com/xml/ns/persistence">
 
-    <persistence-unit name="School" transaction-type="RESOURCE_LOCAL">
+    <persistence-unit name="EagleEventPlanning" transaction-type="RESOURCE_LOCAL">
     <class>ProblemDomain.Client</class>
     <class>ProblemDomain.Event</class>
     <class>ProblemDomain.EventPlanner</class>
