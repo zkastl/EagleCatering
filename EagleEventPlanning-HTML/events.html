@@ -1,10 +1,9 @@
-<!DOCTYPE html>
 <html>
 <head>
 <meta charset="ISO-8859-1">
 <title>Eagle Event Planning</title>
 <link rel="stylesheet" type="text/css" href="style.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script src="js/jquery-3.2.1.min.js"></script>
 </head>
 <body>
 <script>
@@ -26,33 +25,35 @@ function goToLogin() {
 	<input id="Login" value="Login" type="button" onclick="goToLogin()" style="color: white; background: gray;">
 </div>
 
-<div align="center" style="background: white; width:75%; font-size: 12;">
-    <form id='uploadcsv' method='post' action="">
-        <input id="fileupload" name="myfile" type="file" /><br />
-        <input type="submit" value="submit" id="submit" />
+<div id="content" align="center" style="background: white; width:75%; font-size: 12;">
+    <form id='uploadcsv' method='post' action="" align="center">
+        <input id="file" type="file" />
+        <input id='loadfile' value='Load' type='button' />
+        <div id='filecontent'></div>
     </form>
     <script>
-        $(document).ready(function () {
-            $("#fileupload").submit(function (e) {
-
-                $.ajax({
-                    url: "/EagleEventPlanning/system/event/",
-                    type: "POST",
-                    dataType: "csv",
-                    contentType: "application/csv",
-                    data: "header1,header2\ndata1,data2",
-                    statusCode: {
-                        200: function (response) {
-                            $("#providersFormElementsTable")
-                                .html("<tr><td>Nickname</td><td><input type='text' id='nickname' name='nickname'></td></tr><tr><td>CA Number</td><td><input type='text' id='account' name='account'></td></tr>");
-                        },
-                        404 : function (response) {
-                            console.log("404 errored");
-                        }
-                        }
-                    });
+        (function ($) {
+            $('#loadfile').click(function () {
+                if (!window.FileReader) {
+                    return alert("FileReader API is not supported.");
+                };
+                var $i = $('#file'), input = $i[0];
+                if (input.files && input.files[0]) {
+                    file = input.files[0];
+                    fr = new FileReader();
+                    fr.onload = function () {
+                        $('#filecontent').append($('<div/>').html(fr.result));
+                    };
+                    fr.readAsText(file)
+                };
             })
-        });
+        })(jQuery);
+        function handleFileSelect() {
+        }
+
+        function receivedText() {
+            document.getElementById('content').appendChild(document.createTextNode(fr.result));
+        }
     </script>
 </div>
 </body>

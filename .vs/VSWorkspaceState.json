@@ -1,8 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\EagleEventPlanning-HTML"
+    "\\EagleEventPlanning-HTML",
+    "\\WebContent"
   ],
-  "SelectedNode": "\\EagleEventPlanning-HTML\\Login.html",
+  "SelectedNode": "\\EagleEventPlanning-HTML\\events.html",
   "PreviewInSolutionExplorer": false
 }
