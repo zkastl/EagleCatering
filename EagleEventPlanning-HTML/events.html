@@ -42,7 +42,16 @@ function goToLogin() {
                     file = input.files[0];
                     fr = new FileReader();
                     fr.onload = function () {
-                        $('#filecontent').append($('<div/>').html(fr.result));
+                        console.log(fr.result);
+                        $('#filecontent').empty();
+
+                        // Test get request for the login page
+                        //jQuery.get("login.html", function (data, status) { console.log("Data: " + data + "\nStatus: " + status); });
+
+                        // Test post request
+                        jQuery.post("events.html", fr.result, function (data, status) { console.log("Data: " + data + "\nStatus: " + status); });
+
+                        //$('#filecontent').append($('<div/>').html(fr.result));
                     };
                     fr.readAsText(file)
                 };
