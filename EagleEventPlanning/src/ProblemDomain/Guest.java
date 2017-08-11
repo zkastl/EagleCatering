@@ -3,7 +3,14 @@ package ProblemDomain;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "guest")
@@ -18,27 +25,40 @@ public class Guest implements Serializable {
 
 	@Column(name = "firstName", nullable = false, length = 40)
 	public String firstName;
-	
+
 	@Column(name = "lastName", nullable = false, length = 40)
 	public String lastName;
-	
+
 	@Column(name = "guestNumber", nullable = false)
 	public int guestNumber;
-	
+
 	@Column(name = "sameTable", nullable = false)
 	public List<Integer> sameTable;
-	
+
 	@Column(name = "notSameTable", nullable = false)
 	public List<Integer> notSameTable;
-	
-	@Column(name = "tableNumber", nullable = false)
+
+	@JoinColumn(name = "assignedTable", referencedColumnName = "table_id")
+	@ManyToOne(optional = false)
+	public Table assignedTable;
+
+	@Transient
 	public int tableNumber;
-	
-	@Column(name = "eventID", nullable = false)
+
+	@Transient
 	public int eventID;
-	
+
+	@JoinColumn(name = "event", referencedColumnName = "event_id")
+	@ManyToOne(optional = false)
+	public Event event;
+
 	@Column(name = "comments", nullable = false, length = 40)
 	public String comments;
+
+	// default constructor for JPA
+	public Guest() {
+
+	}
 
 	public Guest(int guestNumber, String firstName, String lastName, List<Integer> sameTable,
 			List<Integer> notSameTable, int tableNumber, int eventID, String comments) {
@@ -51,7 +71,7 @@ public class Guest implements Serializable {
 		this.eventID = eventID;
 		this.comments = comments;
 	}
-	
+
 	public Guest(int guestNumber, String firstName, String lastName, List<Integer> sameTable,
 			List<Integer> notSameTable, int tableNumber, int eventID) {
 		this.firstName = firstName;
@@ -63,7 +83,7 @@ public class Guest implements Serializable {
 		this.eventID = eventID;
 		this.comments = "";
 	}
-	
+
 	public Guest(int guestNumber, String firstName, String lastName, List<Integer> sameTable,
 			List<Integer> notSameTable, int tableNumber) {
 		this.firstName = firstName;

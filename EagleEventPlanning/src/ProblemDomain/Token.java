@@ -33,7 +33,7 @@ public class Token implements Serializable {
 	@Column(name = "expire_date")
 	private LocalDate expireDate;
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "user_id", referencedColumnName = "user_id")
+	@JoinColumn(name = "eventPlanner_id", referencedColumnName = "eventPlanner_id")
 	private EventPlanner planner;
 
 	public Token() {

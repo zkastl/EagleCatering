@@ -12,8 +12,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import DataAccessObjects.EventPlannerDAO;
 
-@XmlRootElement(name = "eventPlanner")
-@Entity(name = "eventPlanner")
+@XmlRootElement(name = "eventplanner")
+@Entity(name = "eventplanner")
 public class EventPlanner implements Serializable {
 
 	private static final long serialVersionUID = 1L;

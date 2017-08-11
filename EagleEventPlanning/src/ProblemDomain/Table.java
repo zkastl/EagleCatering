@@ -4,11 +4,17 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "table")
-@Entity(name = "table")
+@Entity(name = "\"table\"")
 public class Table implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -19,18 +25,23 @@ public class Table implements Serializable {
 
 	@Column(name = "tableNumber", nullable = false)
 	public int tableNumber;
-	
-	@OneToMany(mappedBy = "table", targetEntity = Guest.class, fetch = FetchType.EAGER)
+
+	@OneToMany(mappedBy = "assignedTable", targetEntity = Guest.class, fetch = FetchType.EAGER)
 	public List<Guest> seatedGuests;
-	
+
 	@Column(name = "capacity", nullable = false)
 	public int capacity;
-	
+
 	@Column(name = "numberOfEmptySeats", nullable = false)
 	public int numberOfEmptySeats;
-	
+
 	@Column(name = "eventID", nullable = false)
 	public int eventID;
+
+	// default constructor for JPA
+	public Table() {
+
+	}
 
 	public Table(int tableNumber, int capacity, int emptySeats, int eventID) {
 		this.tableNumber = tableNumber;
@@ -39,7 +50,7 @@ public class Table implements Serializable {
 		seatedGuests = new ArrayList<Guest>();
 		this.eventID = eventID;
 	}
-	
+
 	public Table(int tableNumber, int capacity, int emptySeats) {
 		this.tableNumber = tableNumber;
 		this.capacity = capacity;
@@ -51,7 +62,6 @@ public class Table implements Serializable {
 	public boolean addGuest(Guest guest) {
 		if (seatedGuests.size() < capacity - numberOfEmptySeats) {
 			seatedGuests.add(guest);
-			seatedGuests.get(seatedGuests.size() - 1).tableNumber = tableNumber;
 			return true;
 		}
 		return false;

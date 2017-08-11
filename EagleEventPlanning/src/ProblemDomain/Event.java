@@ -4,7 +4,7 @@ import java.io.FileReader;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -56,7 +56,7 @@ public class Event implements Serializable {
 	public Client client;
 
 	@OneToMany(mappedBy = "event", targetEntity = Guest.class, fetch = FetchType.EAGER)
-	private HashMap<String, Guest> guestList;
+	private Hashtable<String, Guest> guestList;
 
 	@Column(name = "tableSize", nullable = false)
 	private Integer tableSize;
@@ -86,7 +86,7 @@ public class Event implements Serializable {
 	}
 
 	public Event(String name, LocalDateTime dateTime, String location, EventPlanner eventPlanner, Client client,
-			HashMap<String, Guest> guestList, Integer tableSize, Integer emptySeatsPerTable, Integer minFitness,
+			Hashtable<String, Guest> guestList, Integer tableSize, Integer emptySeatsPerTable, Integer minFitness,
 			Integer iterations, String status) {
 		this();
 		this.name = name;
@@ -160,7 +160,7 @@ public class Event implements Serializable {
 		this.client = client;
 	}
 
-	public HashMap<String, Guest> getGuestList() {
+	public Hashtable<String, Guest> getGuestList() {
 		return guestList;
 	}
 
@@ -264,80 +264,78 @@ public class Event implements Serializable {
 	public void printPlaceCards() {
 		// TODO
 	}
-	
+
 	public void importGuests(String csvFile) {
-		JFileChooser chooser=new JFileChooser();
+		JFileChooser chooser = new JFileChooser();
 		chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 		chooser.showOpenDialog(null);
 
-		//String path=chooser.getSelectedFile().getAbsolutePath();
-		String filename=chooser.getSelectedFile().getName();
-		
-		try (CSVReader reader = new CSVReader(new FileReader(filename), ',');)
-		{
-				String[] rowData = null;
-				ArrayList<String> rowHeader = new ArrayList<String>();
-				boolean firstLine = true;
-				int i = 0;
-				int guestNumber = -1;
-				String firstName = "";
-				String lastName = "";
-				ArrayList<Integer> sameTable = new ArrayList<Integer>();
-				ArrayList<Integer> notSameTable = new ArrayList<Integer>();
-				int tableNumber = -1;
-				String comments = "";
-				
-				while((rowData = reader.readNext()) != null){
-					for (String data : rowData)
-					{
-						// the first line of the file is column headers	
-						if(firstLine) {
-							rowHeader.add(data);
-						} else { // set the appropriate field
-							switch(rowHeader.get(i)) {
-							case "guestNumber":
-								guestNumber = Integer.parseInt(data);
-							case "firstName":
-								firstName = data;
-							case "lastName":
-								lastName = data;
-							case "sameTable":
-								sameTable.add(Integer.parseInt(data));
-							case "notSameTable":
-								notSameTable.add(Integer.parseInt(data));
-							case "tableNumber":
-								tableNumber = Integer.parseInt(data);
-							case "comments":
-								comments = data;
-							}
-							
-							// move to the next column
-							i++;
-							// when you reach the end of a row add the guest, return to the first header index, and sanitize the fields
-							if(i == rowHeader.size()) {
-								Guest currentGuest = new Guest(guestNumber, firstName, lastName, sameTable, notSameTable, tableNumber, eventId, comments);
-								addGuest(currentGuest);
-								i = 0;
-								guestNumber = -1;
-								firstName = "";
-								lastName = "";
-								sameTable.clear();
-								notSameTable.clear();
-								tableNumber = -1;
-								comments = "";
-							}
+		// String path=chooser.getSelectedFile().getAbsolutePath();
+		String filename = chooser.getSelectedFile().getName();
+
+		try (CSVReader reader = new CSVReader(new FileReader(filename), ',');) {
+			String[] rowData = null;
+			ArrayList<String> rowHeader = new ArrayList<String>();
+			boolean firstLine = true;
+			int i = 0;
+			int guestNumber = -1;
+			String firstName = "";
+			String lastName = "";
+			ArrayList<Integer> sameTable = new ArrayList<Integer>();
+			ArrayList<Integer> notSameTable = new ArrayList<Integer>();
+			int tableNumber = -1;
+			String comments = "";
+
+			while ((rowData = reader.readNext()) != null) {
+				for (String data : rowData) {
+					// the first line of the file is column headers
+					if (firstLine) {
+						rowHeader.add(data);
+					} else { // set the appropriate field
+						switch (rowHeader.get(i)) {
+						case "guestNumber":
+							guestNumber = Integer.parseInt(data);
+						case "firstName":
+							firstName = data;
+						case "lastName":
+							lastName = data;
+						case "sameTable":
+							sameTable.add(Integer.parseInt(data));
+						case "notSameTable":
+							notSameTable.add(Integer.parseInt(data));
+						case "tableNumber":
+							tableNumber = Integer.parseInt(data);
+						case "comments":
+							comments = data;
+						}
+
+						// move to the next column
+						i++;
+						// when you reach the end of a row add the guest, return
+						// to the first header index, and sanitize the fields
+						if (i == rowHeader.size()) {
+							Guest currentGuest = new Guest(guestNumber, firstName, lastName, sameTable, notSameTable,
+									tableNumber, eventId, comments);
+							addGuest(currentGuest);
+							i = 0;
+							guestNumber = -1;
+							firstName = "";
+							lastName = "";
+							sameTable.clear();
+							notSameTable.clear();
+							tableNumber = -1;
+							comments = "";
 						}
 					}
-					
-					if(firstLine) {
-						firstLine = false;
-					}
 				}
-				java.lang.System.out.println("Data Successfully Uploaded");
-		}
-		catch (Exception e)
-		{
-				e.printStackTrace();
+
+				if (firstLine) {
+					firstLine = false;
+				}
+			}
+			java.lang.System.out.println("Data Successfully Uploaded");
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 }
