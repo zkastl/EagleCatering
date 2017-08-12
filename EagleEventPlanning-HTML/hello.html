@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Eagle Event Planning</title>
+		<link rel="stylesheet" type="text/css" href="style.css">
+		<script src="js/jquery-3.2.1.min.js"></script>
+	</head>
+	<body>
+		<p>This is a test page to test REST services.</p>
+		<div id='testarea'></div>
+	</body>
+	<script>
+        (function ($) {
+            $('#loadfile').click(function () {
+                if (!window.FileReader) {
+                    return alert("FileReader API is not supported.");
+                };
+                var $i = $('#file'), input = $i[0];
+                if (input.files && input.files[0]) {
+                    file = input.files[0];
+                    fr = new FileReader();
+                    fr.onload = function () {
+                        console.log(fr.result);
+                        $('#filecontent').empty();
+
+                        // Test get request for the login page
+                        //jQuery.get("login.html", function (data, status) { console.log("Data: " + data + "\nStatus: " + status); });
+
+                        // Test post request
+                        jQuery.post("events.html", fr.result, function (data, status) { console.log("Data: " + data + "\nStatus: " + status); });
+
+                        //$('#filecontent').append($('<div/>').html(fr.result));
+                    };
+                    fr.readAsText(file)
+                };
+            })
+        })(jQuery);
+        function handleFileSelect() {
+        }
+
+		function loadEvents(callback) {
+			console.log("Loading events...");
+
+			$()
+		}
+
+        function receivedText() {
+            document.getElementById('content').appendChild(document.createTextNode(fr.result));
+        }
+    </script>
+</html>

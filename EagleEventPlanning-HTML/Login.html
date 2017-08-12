@@ -45,7 +45,7 @@ $("#loginForm").submit(function (e){
         var password = $('#password').val();
         alert("LOGIN BUTTON PRESSED");
 		$.ajax( { 
-			url:"/EagleEventPlanning/system/login/",
+			url:"/EagleEventPlanning/services/login/",
 			type: "POST",
 			dataType: "json",
 			contentType: "application/json",
@@ -72,7 +72,7 @@ $("#loginForm").submit(function (e){
 		  	
 			404 : function(jqXHR, textStatus, errorThrown) {
 				$("#page-message").html("Error:"+textStatus);
-				consule.log(errorThrown);
+				console.log(errorThrown);
 	  	        console.log("error " + textStatus);
 	  	        console.log("incoming Text " + jqXHR.responseText);
 	  	      	}
