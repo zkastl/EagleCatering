@@ -12,7 +12,12 @@
     		<init-param>
       			<param-name>jersey.config.server.provider.packages</param-name>
       			<param-value>REST</param-value>
-    		</init-param>    
+    		</init-param>      
+    		<init-param>
+        		<param-name>jersey.config.server.provider.classnames</param-name>
+        		<param-value>org.glassfish.jersey.media.multipart.MultiPartFeature</param-value>
+    		</init-param>
+
   		</servlet>
   		<servlet-mapping>
     		<servlet-name>Eagle Event Planning RESTful Application</servlet-name>

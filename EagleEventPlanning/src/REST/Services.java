@@ -1,23 +1,31 @@
 package REST;
 
-import java.util.ArrayList;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import javax.persistence.EntityTransaction;
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
-import DataAccessObjects.EM;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 
-import ProblemDomain.*;
-import ProblemDomain.System;
+import DataAccessObjects.EM;
+import ProblemDomain.EventPlanner;
+import ProblemDomain.EventSystem;
+import ProblemDomain.Token;
 
 @Path("/services")
 public class Services {
@@ -36,14 +44,37 @@ public class Services {
 		return "Hello GET-REST World!\n You've called this method: " + numberTimesCalled + " times.";
 	}
 	
-
+	@Context ServletContext context;
+	
 	@POST
-	@Path("/hello")
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
-	public Response helloPost(String s) {
-		String responseText = "Hello POST-REST World!";
-		return Response.ok(responseText).build();
+	@Path("/hello/{id}/uploadfile")
+	@Produces(MediaType.MULTIPART_FORM_DATA)
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	public Response helloPost(@PathParam("id") String id,
+			@FormDataParam("file") InputStream uploadInputStream,
+			@FormDataParam("file") FormDataContentDisposition fileDetail) {
+		
+		String realPath = context.getRealPath("/");
+		String fileLocationOnServer = realPath + "/uploads/";
+		new File(fileLocationOnServer).mkdirs();
+		System.out.println(fileLocationOnServer);
+		
+		// Save the file to the server
+		OutputStream out;
+		try {
+			out = new FileOutputStream(new File(fileLocationOnServer));
+			int read = 0;
+			byte[] bytes = new byte[1024];
+			while ((read = uploadInputStream.read(bytes)) != -1) {
+				out.write(bytes,  0,  read);
+			}
+		}
+		catch(IOException ioex) {
+			ioex.printStackTrace();
+		}
+		finally {
+		}
+		return null;//Response.ok(responseText).build();
 	}
 
 	@POST
@@ -70,7 +101,7 @@ public class Services {
 	private void authenticate(String username, String password) throws Exception {
 		// Authenticate against a database, LDAP, file or whatever
 		// Throw an Exception if the credentials are invalid
-		EventPlanner planner = System.findEventPlannerByUserName(username);
+		EventPlanner planner = EventSystem.findEventPlannerByUserName(username);
 		if (planner == null)
 			throw new Exception();
 		if (!planner.authenticate(password))
@@ -84,7 +115,7 @@ public class Services {
 		// Return the issued token
 		EntityTransaction userTransaction = EM.getEM().getTransaction();
 		userTransaction.begin();
-		Token token = new Token(System.findEventPlannerByUserName(username));
+		Token token = new Token(EventSystem.findEventPlannerByUserName(username));
 		token.save();
 		userTransaction.commit();
 		return token.getToken();
