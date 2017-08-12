@@ -1,6 +1,7 @@
 package REST;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -54,19 +55,23 @@ public class Services {
 			@FormDataParam("file") InputStream uploadInputStream,
 			@FormDataParam("file") FormDataContentDisposition fileDetail) {
 		
-		String realPath = context.getRealPath("/");
-		String fileLocationOnServer = realPath + "/uploads/";
+		String fileLocationOnServer = System.getenv("APPDATA") +
+				"\\EagleEventUploads\\" +
+				fileDetail.getFileName();
+		
 		new File(fileLocationOnServer).mkdirs();
 		System.out.println(fileLocationOnServer);
 		
 		// Save the file to the server
 		OutputStream out;
 		try {
-			out = new FileOutputStream(new File(fileLocationOnServer));
 			int read = 0;
 			byte[] bytes = new byte[1024];
+			
+			out = new FileOutputStream(fileLocationOnServer);
 			while ((read = uploadInputStream.read(bytes)) != -1) {
-				out.write(bytes,  0,  read);
+				//out.write(bytes,  0,  read);
+				System.out.println(read);
 			}
 		}
 		catch(IOException ioex) {
@@ -74,7 +79,7 @@ public class Services {
 		}
 		finally {
 		}
-		return null;//Response.ok(responseText).build();
+		return null;
 	}
 
 	@POST
