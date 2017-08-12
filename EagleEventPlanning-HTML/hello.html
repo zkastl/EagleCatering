@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Eagle Event Planning</title>
+<link rel="stylesheet" type="text/css" href="style.css">
+<script src="js/jquery-3.2.1.min.js"></script>
+</head>
+<body>
+<script>
+function goHome() {
+    window.location.assign("MainPage.html");
+}
+function goToContact() {
+    window.location.assign("ContactInfo.html");
+}
+function goToLogin() {
+    window.location.assign("Login.html");
+}
+function goToImport() {
+    window.location.assign("hello.html");
+}
+</script>
+
+<h1>Eagle Event Planning</h1>
+<div style="color: white; background: gray; width: 100%; font-size: 12;">
+    <input id="Home" value="Home" type="button" onclick="goHome()" style="color: white; background: gray;">
+    <input id="Contact" value="Contact" type="button" onclick="goToContact()" style="color: white; background: gray;">
+    <input id="Login" value="Login" type="button" onclick="goToLogin()" style="color: white; background: gray;">
+    <input id="Import" value="Import" type="button" onclick="goToImport()" style="color: white; background: gray;">	
+</div>
+        <div id='bodydiv' style="margin:auto;
+                            background-color:white;
+                            padding:10px;
+                            transform: translate(0px, 25px);
+                            max-width:370px;
+                            border-style:solid;
+                            border-width:2px;">
+            
+            <form id='testform' method="post">
+                <fieldset>
+                    <div style="margin:auto;">
+                        <legend>Guest List Import</legend>
+                        <!--<label>Get Button <input id='gobox' type="button" value="Click for a GET request" /></label>-->
+                        <input id="uploadfile" type="file" />
+                        <input id='submitbox' type="submit" value="Upload" />
+                        <br /><span id="uploaderror" class="error"></span>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+	</body>
+	<script type="text/javascript">
+        $(document).ready(function () {
+            var getUrl = "/EagleEventPlanning/services/hello";
+            $('#gobox').click(function () {
+                $.ajax({
+                    url: getUrl,
+                    type: 'GET',
+                    complete: function(jqXHR, data) {
+                        switch(jqXHR.status) {
+                            case 200:
+                                console.log("200 Received!\n" + jqXHR.statusText);
+                                break;
+                            default:
+                                alert(jqXHR.status.toString() + " " + jqXHR.statusText);
+                                break;
+                        }
+                    },
+                    success: function(data, textStatus, jqXHR) {
+                        console.log(data);
+                    }
+                });
+            });
+            $('#submitbox').click(function (e) {
+                console.log("uploading...");
+                var file = $('#uploadfile').get(0).files[0];                
+                var uploadData = new FormData();
+                uploadData.append('file', file);
+                var id = 1;//localStorage.event;
+                var postUrl = "/EagleEventPlanning/services/hello/" + id + "/uploadfile";
+                $.ajax({
+	                url: postUrl,
+	                type: 'POST',
+	                data: uploadData,
+	                cache: false,
+	                contentType: false,
+	                processData: false,
+	                success: function(){
+                        // TODO - LOAD THE GUEST 
+	                },
+	                error: function(response){
+	                    var error = response.responseJSON;
+	                    if (response.status === 409){
+	                    error = response.responseText;
+	                }
+	            alert(error);
+	        }	       
+	    });
+            });
+        });
+    </script>
+</html>

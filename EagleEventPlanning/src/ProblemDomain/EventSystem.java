@@ -6,7 +6,7 @@ import java.util.List;
 import DataAccessObjects.EventPlannerDAO;
 import DataAccessObjects.TokenDAO;
 
-public class System {
+public class EventSystem {
 
 	private Collection<Token> tokens;
 	private Collection<EventPlanner> planners;

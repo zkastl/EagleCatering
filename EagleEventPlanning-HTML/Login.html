@@ -17,6 +17,9 @@ function goToContact() {
 function goToLogin() {
 	window.location.assign("Login.html");
 }
+function goToImport() {
+	window.location.assign("hello.html");
+}
 </script>
 
 <h1>Eagle Event Planning</h1>
@@ -24,10 +27,12 @@ function goToLogin() {
 	<input id="Home" value="Home" type="button" onclick="goHome()" style="color: white; background: gray;">
 	<input id="Contact" value="Contact" type="button" onclick="goToContact()" style="color: white; background: gray;">
 	<input id="Login" value="Login" type="button" onclick="goToLogin()" style="color: white; background: gray;">
+	<input id="Import" value="Import" type="button" onclick="goToImport()" style="color: white; background: gray;">	
 </div>
 
-<div align="center">
-	<form style="background: white; width: 80%; height: 300px; margin:20px;"  id="loginForm" method="post">
+<div align="center" >
+	<form style="background: white; width: 50%; height: 300px; margin:20px;border-style:solid;border-width:2px;"  
+		id="loginForm" method="post">
 		<h2> Planner Login</h2><br>
 		<span id="loginError" class="error"></span>
 		Username: <input type="text" id="userName">
@@ -43,9 +48,8 @@ $(document).ready(function() {
 $("#loginForm").submit(function (e){
 		var userName = $('#userName').val();
         var password = $('#password').val();
-        alert("LOGIN BUTTON PRESSED");
 		$.ajax( { 
-			url:"/EagleEventPlanning/system/login/",
+			url:"/EagleEventPlanning/services/login/",
 			type: "POST",
 			dataType: "json",
 			contentType: "application/json",
@@ -58,7 +62,6 @@ $("#loginForm").submit(function (e){
 				  document.cookie="token=" + response.responseText;
 				  $("#page-message").html("Logged in");
                   // TODO send to appropriate page
-				  window.location.assign("MainPage.html");
 		  		},
 		  	406: function(response) {
 		  		var errors = response.responseJSON;
@@ -72,7 +75,7 @@ $("#loginForm").submit(function (e){
 		  	
 			404 : function(jqXHR, textStatus, errorThrown) {
 				$("#page-message").html("Error:"+textStatus);
-				consule.log(errorThrown);
+				console.log(errorThrown);
 	  	        console.log("error " + textStatus);
 	  	        console.log("incoming Text " + jqXHR.responseText);
 	  	      	}

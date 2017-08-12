@@ -1,35 +1,86 @@
 package REST;
 
-import java.util.ArrayList;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import javax.persistence.EntityTransaction;
+import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
-import DataAccessObjects.EM;
-import ProblemDomain.Event;
-//import schoolPD.Student;
-//import schoolUT.Message;
-import ProblemDomain.EventPlanner;
-import ProblemDomain.Guest;
-//import systemPD.RoleAssignment;
-import ProblemDomain.System;
-import ProblemDomain.Token;
-import TableSorter.Layout;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 
-@Path("/system")
-public class SystemService {
+import DataAccessObjects.EM;
+import ProblemDomain.EventPlanner;
+import ProblemDomain.EventSystem;
+import ProblemDomain.Token;
+
+@Path("/services")
+public class Services {
 
 	@Context
 	SecurityContext securityContext;
-
+	static int numberTimesCalled = 0;
 	// ArrayList<Message> messages = new ArrayList<Message>();
+	
+	// Test services
+	@GET
+	@Path("/hello")
+	@Produces(MediaType.TEXT_PLAIN)
+	public String hello() {
+		numberTimesCalled++;
+		return "Hello GET-REST World!\n You've called this method: " + numberTimesCalled + " times.";
+	}
+	
+	@Context ServletContext context;
+	
+	@POST
+	@Path("/hello/{id}/uploadfile")
+	@Produces(MediaType.MULTIPART_FORM_DATA)
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	public Response helloPost(@PathParam("id") String id,
+			@FormDataParam("file") InputStream uploadInputStream,
+			@FormDataParam("file") FormDataContentDisposition fileDetail) {
+		
+		String fileLocationOnServer = System.getenv("APPDATA") +
+				"\\EagleEventUploads\\" +
+				fileDetail.getFileName();
+		
+		new File(fileLocationOnServer).mkdirs();
+		System.out.println(fileLocationOnServer);
+		
+		// Save the file to the server
+		OutputStream out;
+		try {
+			int read = 0;
+			byte[] bytes = new byte[1024];
+			
+			out = new FileOutputStream(fileLocationOnServer);
+			while ((read = uploadInputStream.read(bytes)) != -1) {
+				//out.write(bytes,  0,  read);
+				System.out.println(read);
+			}
+		}
+		catch(IOException ioex) {
+			ioex.printStackTrace();
+		}
+		finally {
+		}
+		return null;
+	}
 
 	@POST
 	@Path("/login")
@@ -55,7 +106,7 @@ public class SystemService {
 	private void authenticate(String username, String password) throws Exception {
 		// Authenticate against a database, LDAP, file or whatever
 		// Throw an Exception if the credentials are invalid
-		EventPlanner planner = System.findEventPlannerByUserName(username);
+		EventPlanner planner = EventSystem.findEventPlannerByUserName(username);
 		if (planner == null)
 			throw new Exception();
 		if (!planner.authenticate(password))
@@ -69,185 +120,9 @@ public class SystemService {
 		// Return the issued token
 		EntityTransaction userTransaction = EM.getEM().getTransaction();
 		userTransaction.begin();
-		Token token = new Token(System.findEventPlannerByUserName(username));
+		Token token = new Token(EventSystem.findEventPlannerByUserName(username));
 		token.save();
 		userTransaction.commit();
 		return token.getToken();
 	}
-	
-	@POST
-	@Path("/events")
-	@Consumes(MediaType.TEXT_PLAIN)
-	@Produces(MediaType.TEXT_PLAIN)
-	public Layout getLayout(String guestList) throws Exception {
-		Event t = new Event();
-		t.importGuests(guestList);
-		return Layout.createRandomTableLayout((ArrayList<Guest>)t.getGuestList().values(), 8, 2);
-	}
-	//
-	// @Secured({Role.Admin})
-	// @GET
-	// @Path("/employees")
-	// @Produces(MediaType.APPLICATION_JSON)
-	// public List<EventPlanner> getUser(
-	// @DefaultValue("0") @QueryParam("page") String page,
-	// @DefaultValue("5") @QueryParam("per_page") String perPage){
-	// return
-	// System.findAllEventPlanners(Integer.parseInt(page),Integer.parseInt(perPage));
-	// }
-	// @Secured
-	// @GET
-	// @Path("/users/current")
-	// @Produces(MediaType.APPLICATION_JSON)
-	// public EventPlanner getUser(){
-	// String username = securityContext.getUserPrincipal().getName();
-	// EventPlanner planner = System.findEventPlannerByUserName(username);
-	// return planner;
-	// }
-	//
-	// @Secured({Role.Admin})
-	// @GET
-	// @Path("/users/{id}")
-	// @Produces(MediaType.APPLICATION_JSON)
-	// public User getUser(@PathParam("id") String id){
-	// User user = System.findUserById(id);
-	// EM.getEM().refresh(user);
-	// return user;
-	// }
-	//
-	// @Secured({Role.ADMIN})
-	// @POST
-	// @Path("/users")
-	// @Produces(MediaType.APPLICATION_JSON)
-	// @Consumes(MediaType.APPLICATION_JSON)
-	// public ArrayList<Message> addUser(User user,@Context final
-	// HttpServletResponse response) throws IOException{
-	//
-	// if (user == null) {
-	//
-	// response.setStatus(HttpServletResponse.SC_EXPECTATION_FAILED);
-	// try {
-	// response.flushBuffer();
-	// }catch(Exception e){}
-	// messages.add(new Message("op002","Fail Operation",""));
-	// return messages;
-	// }
-	// else {
-	//
-	// ArrayList<Message> errMessages = user.validate();
-	// if (errMessages != null) {
-	//
-	// response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
-	// try {
-	// response.flushBuffer();
-	// }
-	// catch(Exception e){
-	// }
-	// return errMessages;
-	// }
-	// EntityTransaction userTransaction = EM.getEM().getTransaction();
-	// userTransaction.begin();
-	// Boolean result = System.addUser(user);
-	// if (user.getRoleAssignments() != null){
-	// for (RoleAssignment ra : user.getRoleAssignments()) {
-	// user.addRoleAssignment(ra);
-	// }
-	// }
-	// userTransaction.commit();
-	// if(result){
-	// messages.add(new Message("op001","Success Operation",""));
-	// return messages;
-	// }
-	// response.setStatus(HttpServletResponse.SC_EXPECTATION_FAILED);
-	// try {
-	// response.flushBuffer();
-	// }
-	// catch(Exception e){
-	// }
-	// messages.add(new Message("op002","Fail Operation",""));
-	// return messages;
-	// }
-	// }
-	// @Secured({Role.ADMIN})
-	// @PUT
-	// @Path("/users/{id}")
-	// @Produces(MediaType.APPLICATION_JSON)
-	// @Consumes(MediaType.APPLICATION_JSON)
-	// public ArrayList<Message> udpatedStudent(User user,@PathParam("id")
-	// String id, @Context final HttpServletResponse response) throws
-	// IOException{
-	// User oldUser = System.findUserById(id);
-	// if (oldUser == null)
-	// {
-	// response.setStatus(HttpServletResponse.SC_EXPECTATION_FAILED);
-	// try {
-	// response.flushBuffer();
-	// }catch(Exception e){}
-	// messages.add(new Message("op002","Fail Operation",""));
-	// return messages;
-	// }
-	// else
-	// {
-	// ArrayList<Message> errMessages = user.validate();
-	// if (errMessages != null) {
-	// response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
-	// try {
-	// response.flushBuffer();
-	// }
-	// catch(Exception e){
-	// }
-	// return errMessages;
-	// }
-	// }
-	// EntityTransaction userTransaction = EM.getEM().getTransaction();
-	// userTransaction.begin();
-	// Boolean result = oldUser.update(user);
-	// userTransaction.commit();
-	// if(result){
-	// messages.add(new Message("op001","Success Operation",""));
-	// return messages;
-	// }
-	// response.setStatus(HttpServletResponse.SC_EXPECTATION_FAILED);
-	// try {
-	// response.flushBuffer();
-	// }catch(Exception e){}
-	// messages.add(new Message("op002","Fail Operation",""));
-	// return messages;
-	// }
-	//
-	// @Secured({Role.ADMIN})
-	// @DELETE
-	// @Path("/users/{id}")
-	// @Produces(MediaType.APPLICATION_JSON)
-	// public ArrayList<Message> deleteUser(@PathParam("id") String id, @Context
-	// final HttpServletResponse response){
-	// User user = System.findUserById(id);
-	// if (user == null) {
-	// response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-	// try {
-	// response.flushBuffer();
-	// }catch(Exception e){}
-	// messages.add(new Message("op002","Fail Operation",""));
-	// return messages;
-	// }
-	// EntityTransaction userTransaction = EM.getEM().getTransaction();
-	// userTransaction.begin();
-	// if (user.getRoleAssignments() != null){
-	// for (RoleAssignment ra : user.getRoleAssignments()) {
-	// user.removeRoleAssignment(ra);
-	// }
-	// }
-	//
-	// Boolean result = System.removeUser(user);
-	// userTransaction.commit();
-	// if(result){
-	// messages.add(new Message("op001","Success Operation",""));
-	// return messages;
-	// }
-	// else {
-	// messages.add(new Message("op002","Fail Operation",""));
-	// return messages;
-	// }
-	// }
-
 }

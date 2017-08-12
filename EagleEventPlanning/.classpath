@@ -33,5 +33,7 @@
 	<classpathentry kind="lib" path="C:/Users/zkast/git/EagleCatering/EagleEventPlanning/WebContent/WEB-INF/lib/persistence-api-1.0.jar"/>
 	<classpathentry kind="lib" path="C:/Users/zkast/git/EagleCatering/EagleEventPlanning/WebContent/WEB-INF/lib/validation-api-1.1.0.Final.jar"/>
 	<classpathentry kind="lib" path="C:/Users/zkast/git/EagleCatering/EagleEventPlanning/WebContent/WEB-INF/lib/opencsv-3.10.jar"/>
+	<classpathentry kind="lib" path="C:/Users/zkast/git/EagleCatering/EagleEventPlanning/WebContent/WEB-INF/lib/jersey-media-multipart-2.17.jar"/>
+	<classpathentry kind="lib" path="C:/Users/zkast/git/EagleCatering/EagleEventPlanning/WebContent/WEB-INF/lib/mimepull-1.9.3.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
