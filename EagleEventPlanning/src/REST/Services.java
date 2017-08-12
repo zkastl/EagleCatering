@@ -39,10 +39,11 @@ public class Services {
 
 	@POST
 	@Path("/hello")
-	@Produces(MediaType.TEXT_HTML)
+	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public String helloPost(HttpServletRequest request) {
-		return "Hello POST-REST World!";
+	public Response helloPost(String s) {
+		String responseText = "Hello POST-REST World!";
+		return Response.ok(responseText).build();
 	}
 
 	@POST
