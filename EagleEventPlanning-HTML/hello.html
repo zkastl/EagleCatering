@@ -2,50 +2,73 @@
 <html>
 	<head>
 		<title>Eagle Event Planning</title>
-		<link rel="stylesheet" type="text/css" href="style.css">
 		<script src="js/jquery-3.2.1.min.js"></script>
 	</head>
 	<body>
-		<p>This is a test page to test REST services.</p>
-		<div id='testarea'></div>
+		<h1 style="font-family: Arial">This is a test page to test REST services.</h1>
+		<div id='testarea'>
+            <form id='testform'>
+                <input id='gobox' type="button" value="Click for a GET request" />
+                <div id='goBoxOutput'></div>
+                <br /><br />
+                <input id='tbox' type='text' />
+                <input id='submitbox' type="submit" value="Click for a POST request" />
+
+            </form>    
+        </div>
 	</body>
-	<script>
-        (function ($) {
-            $('#loadfile').click(function () {
-                if (!window.FileReader) {
-                    return alert("FileReader API is not supported.");
-                };
-                var $i = $('#file'), input = $i[0];
-                if (input.files && input.files[0]) {
-                    file = input.files[0];
-                    fr = new FileReader();
-                    fr.onload = function () {
-                        console.log(fr.result);
-                        $('#filecontent').empty();
-
-                        // Test get request for the login page
-                        //jQuery.get("login.html", function (data, status) { console.log("Data: " + data + "\nStatus: " + status); });
-
-                        // Test post request
-                        jQuery.post("events.html", fr.result, function (data, status) { console.log("Data: " + data + "\nStatus: " + status); });
-
-                        //$('#filecontent').append($('<div/>').html(fr.result));
-                    };
-                    fr.readAsText(file)
-                };
-            })
-        })(jQuery);
-        function handleFileSelect() {
-        }
-
-		function loadEvents(callback) {
-			console.log("Loading events...");
-
-			$()
-		}
-
-        function receivedText() {
-            document.getElementById('content').appendChild(document.createTextNode(fr.result));
-        }
+	<script type="text/javascript">
+        $(document).ready(function () {            
+            var url = "/EagleEventPlanning/services/hello/";
+            $('#gobox').click(function () {
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    complete: function(jqXHR, data) {
+                        switch(jqXHR.status) {
+                            case 200:
+                                console.log("200 Received!\n" + jqXHR.statusText);
+                                console.log
+                                break;
+                            default:
+                                alert(jqXHR.status.toString() + " " + jqXHR.statusText);
+                                break;
+                        }
+                    },
+                    success: function(data, textStatus, jqXHR) {
+                        console.log(data);
+                    }
+                });
+            });
+            $('#testform').submit(function (e) {                
+                var postData = $('#tbox').val();
+                console.log(postData);
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    dataType: "csv",
+                    contentType: "text/csv",  
+                    data: postdata,
+                    beforeSend: function() {
+                        console.log("Getting ready to send...");
+                    },
+                    error: function(jqXHR) {
+                        console.log(jqXHR.statusText);
+                    },
+                    complete: function(jqXHR, textStatus) {
+                        switch(jqXHR.status) {
+                            case 200:
+                                alert("200 Received!\n" + jqXHR.statusText);
+                                break;
+                            case 415:
+                                alert(jqXHR.status.toString() + " " + jqXHR.statusText);
+                            default:
+                                alert(jqXHR.status.toString() + " " + jqXHR.statusText);
+                                break;
+                        }
+                    }
+                });
+            });
+        });
     </script>
 </html>

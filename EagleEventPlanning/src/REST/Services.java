@@ -24,6 +24,7 @@ public class Services {
 
 	@Context
 	SecurityContext securityContext;
+	static int numberTimesCalled = 0;
 	// ArrayList<Message> messages = new ArrayList<Message>();
 	
 	// Test services
@@ -31,16 +32,17 @@ public class Services {
 	@Path("/hello")
 	@Produces(MediaType.TEXT_PLAIN)
 	public String hello() {
-		return "Hello REST World!";
+		numberTimesCalled++;
+		return "Hello GET-REST World!\n You've called this method: " + numberTimesCalled + " times.";
 	}
 	
 
 	@POST
 	@Path("/hello")
-	@Consumes(MediaType.TEXT_PLAIN)
-	@Produces(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.TEXT_HTML)
+	@Consumes(MediaType.APPLICATION_JSON)
 	public String helloPost(HttpServletRequest request) {
-		return "Hello REST World!";
+		return "Hello POST-REST World!";
 	}
 
 	@POST
