@@ -56,7 +56,7 @@ public class Event implements Serializable {
 	public Client client;
 
 	@OneToMany(mappedBy = "event", targetEntity = Guest.class, fetch = FetchType.EAGER)
-	private HashMap<String, Guest> guestList;
+	private HashMap<String, Guest> guestList = new HashMap<String, Guest>();
 
 	@Column(name = "tableSize", nullable = false)
 	private Integer tableSize;
@@ -77,7 +77,7 @@ public class Event implements Serializable {
 	private String status;
 
 	public Event() {
-
+		
 	}
 
 	public Event(String name) {
@@ -167,7 +167,7 @@ public class Event implements Serializable {
 	public Boolean addGuest(Guest guest) {
 		guest.eventID = this.eventId;
 		guestList.put(guest.getName(), guest);
-		GuestDAO.addGuest(guest);
+		//GuestDAO.addGuest(guest);
 		return true;
 	}
 
@@ -266,20 +266,14 @@ public class Event implements Serializable {
 	}
 	
 	public void importGuests(String csvFile) {
-		JFileChooser chooser=new JFileChooser();
-		chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-		chooser.showOpenDialog(null);
-
-		//String path=chooser.getSelectedFile().getAbsolutePath();
-		String filename=chooser.getSelectedFile().getName();
 		
-		try (CSVReader reader = new CSVReader(new FileReader(filename), ',');)
+		try (CSVReader reader = new CSVReader(new FileReader(csvFile), ',');)
 		{
 				String[] rowData = null;
 				ArrayList<String> rowHeader = new ArrayList<String>();
 				boolean firstLine = true;
 				int i = 0;
-				int guestNumber = -1;
+				int guestNumber = 1;
 				String firstName = "";
 				String lastName = "";
 				ArrayList<Integer> sameTable = new ArrayList<Integer>();
@@ -294,31 +288,42 @@ public class Event implements Serializable {
 						if(firstLine) {
 							rowHeader.add(data);
 						} else { // set the appropriate field
-							switch(rowHeader.get(i)) {
-							case "guestNumber":
-								guestNumber = Integer.parseInt(data);
+							String value = rowHeader.get(i);
+							switch(value) {
 							case "firstName":
 								firstName = data;
+								break;
 							case "lastName":
 								lastName = data;
+								break;
 							case "sameTable":
-								sameTable.add(Integer.parseInt(data));
-							case "notSameTable":
-								notSameTable.add(Integer.parseInt(data));
+								if(!data.equals(""))
+									sameTable.add(Integer.parseInt(data));							
+								break;
+							case "notSameTable":								
+								if(!data.equals("")) 
+									notSameTable.add(Integer.parseInt(data));
+								break;
 							case "tableNumber":
 								tableNumber = Integer.parseInt(data);
+								break;
 							case "comments":
 								comments = data;
+								break;
+							default:
+								break;
 							}
 							
 							// move to the next column
 							i++;
 							// when you reach the end of a row add the guest, return to the first header index, and sanitize the fields
+							// There's a major issue with trying to parse the first header in the csv file. Because it's the guest number,
+							// there are other ways to track it - zak
 							if(i == rowHeader.size()) {
 								Guest currentGuest = new Guest(guestNumber, firstName, lastName, sameTable, notSameTable, tableNumber, eventId, comments);
 								addGuest(currentGuest);
 								i = 0;
-								guestNumber = -1;
+								guestNumber++;
 								firstName = "";
 								lastName = "";
 								sameTable.clear();

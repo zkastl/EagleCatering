@@ -42,7 +42,7 @@ function goToImport() {
                     <div style="margin:auto;">
                         <legend>Guest List Import</legend>
                         <!--<label>Get Button <input id='gobox' type="button" value="Click for a GET request" /></label>-->
-                        <input id="uploadfile" type="file" />
+                        <input id="uploadfile" type="file" accept=".csv" />
                         <input id='submitbox' type="submit" value="Upload" />
                         <br /><span id="uploaderror" class="error"></span>
                     </div>
@@ -86,17 +86,12 @@ function goToImport() {
 	                cache: false,
 	                contentType: false,
 	                processData: false,
-	                success: function(){
-                        // TODO - LOAD THE GUEST 
-	                },
-	                error: function(response){
-	                    var error = response.responseJSON;
-	                    if (response.status === 409){
-	                    error = response.responseText;
-	                }
-	            alert(error);
-	        }	       
-	    });
+	                statusCode: {
+                        200: function(response) {
+                            alert(response.statusText);
+	                    }
+                    }     
+	            });
             });
         });
     </script>
