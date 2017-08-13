@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Eagle Event Planning</title>
+<link rel="stylesheet" type="text/css" href="style.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+</head>
+<body>
+
+<h1>Eagle Event Planning</h1>
+<div style="color: white; background: gray; width: 100%; font-size: 12;">
+	<table class="nav" style="width: 100%">
+	<tr>
+		<td style="width: 0"><a href="MainPage.html">Home</a></td>
+		<td style="width: 0"><a href="contactinfo.html">Contact</a></td>
+		<td style="width: 0"><a href="events.html">Events</a></td>
+		<td style="width: 0"><a href="ClientManagement.html">Clients</a></td>
+		<td style="width: 0"><a href="EmployeeManagement.html">Employees</a></td>
+		<td style="width: 0"><a href="logout.html">Logout</a></td>
+		<td id="userWelcome" style="text-align: right;">Welcome</td>
+	</tr>
+	</table>
+</div>
+
+
+<div align="center">
+	<div style="background: white; width: 80%; height: 300px; margin:20px;">
+		<h2>Event Planners</h2><br>
+		<table class="center" id="eventPlanners"></table>
+
+		</div>
+</div>
+ 
+<script>
+
+	var start = 0;
+	var page = 15;
+
+	
+	function getCookie(cname) {
+	    var name = cname + "=";
+	    var decodedCookie = decodeURIComponent(document.cookie);
+	    var ca = decodedCookie.split(';');
+	    for(var i = 0; i <ca.length; i++) {
+	        var c = ca[i];
+	        while (c.charAt(0) == ' ') {
+	            c = c.substring(1);
+	        }
+	        if (c.indexOf(name) == 0) {
+	            return c.substring(name.length, c.length);
+	        }
+	    }
+	    return "";
+	}
+	
+	function setHeader(xhr) {
+		  token = getCookie("token");
+		  xhr.setRequestHeader('Authorization', 'Bearer '+token );		  
+	}
+	
+	function getPrevious()
+	{
+		start = start-page;
+		if (start <1)  start = 0;
+		createTable(start);
+	}
+	
+	function getNext()
+	{
+		if ($("#eventPlanners") && $("#eventPlanners").prop('rows').length-1 == page) start=start+page;
+		createTable(start);
+	}
+
+    function selectChange() 
+    {
+        id = getId();
+        $("#selectedID").html(id);
+        $("#updateID").val(id);
+        $("#deleteID").val(id);   
+    }
+    
+    function getId()
+	{ 
+	  return jQuery( 'input[name=selectedRow]:checked' ).val()
+	}
+    
+    function getCurrentUser() {
+    	$.ajax({
+    	    url: "/EagleEventPlanning/system/employees/current",
+    	    type: 'GET',
+    	    datatype: 'json',
+    	    statusCode: {
+    	    200: function( response ) {
+    	
+    			$('#userWelcome').html("Welcome, "+response.name);
+    	    },
+    	    401:function( response ) {
+    	    		$('#student-list-table').html("You must Login first");}
+    	    },
+    	    
+    	    error: function(jqXHR, textStatus, errorThrown) {
+      	        console.log("error " + textStatus);
+      	        console.log("incoming Text " + jqXHR.responseText);},
+    	    beforeSend: setHeader       
+    	  });   	
+    }
+  
+    function createTable(start) {
+
+    	$.ajax({
+    	    url: "/EagleEventPlanning/system/employees?page="+start+"&per_page="+page,
+    	    type: 'GET',
+    	    datatype: 'json',
+    	    statusCode: {
+    	    200: function( response ) {
+      		  var tableHTML = '<tr><th></th><th width= 50px>ID</th><th width= 100px>Name</th></tr>';
+  	        		$.each(response, function (i, planner) {
+  	            		tableHTML += '<tr><td><input type="radio" onchange= "selectChange()" name="selectedRow" value='+planner.eventPlannerId+'><td>' + planner.eventPlannerId + '</td><td>' + planner.name + '</td></tr>';
+  	        		});
+  	        tableHTML+='</table>';
+  	       $('#eventPlanners').html(tableHTML);},
+  	    401:function( response ) {
+  	    		$('#eventPlanners').html("You must Login first");
+  	    		},
+    	    403:function( response ) {
+  	    		$('#eventPlanners').html("Access to the page forbiden");
+  	    		}
+    	    },
+  	    
+    	    error: function(jqXHR, textStatus, errorThrown) {
+      	        console.log("error " + textStatus);
+      	        console.log("incoming Text " + jqXHR.responseText);},
+    	    beforeSend: setHeader       
+    	  });   
+
+     }
+	function setHeader(xhr) {
+		  token = getCookie("token");
+		  xhr.setRequestHeader('Authorization', 'Bearer '+token );		  
+	}
+	$(document).ready(function() {
+    		$("#previous").click(function() {getPrevious()});
+    		$("#next").click(function() {getNext()});
+    		getCurrentUser();
+    		createTable(start);
+    })
+</script>
+</body>
+</html>

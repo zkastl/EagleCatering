@@ -43,7 +43,7 @@ $(document).ready(function() {
 $("#loginForm").submit(function (e){
 		var userName = $('#userName').val();
         var password = $('#password').val();
-        alert("LOGIN BUTTON PRESSED");
+
 		$.ajax( { 
 			url:"/EagleEventPlanning/system/login/",
 			type: "POST",
@@ -58,7 +58,7 @@ $("#loginForm").submit(function (e){
 				  document.cookie="token=" + response.responseText;
 				  $("#page-message").html("Logged in");
                   // TODO send to appropriate page
-				  window.location.assign("MainPage.html");
+				  window.location.assign("events.html");
 		  		},
 		  	406: function(response) {
 		  		var errors = response.responseJSON;

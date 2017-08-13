@@ -74,7 +74,7 @@ public class SystemService {
 		userTransaction.commit();
 		return token.getToken();
 	}
-	
+
 	@POST
 	@Path("/events")
 	@Consumes(MediaType.TEXT_PLAIN)
@@ -82,7 +82,7 @@ public class SystemService {
 	public Layout getLayout(String guestList) throws Exception {
 		Event t = new Event();
 		t.importGuests(guestList);
-		return Layout.createRandomTableLayout((ArrayList<Guest>)t.getGuestList().values(), 8, 2);
+		return Layout.createRandomTableLayout((ArrayList<Guest>) t.getGuestList().values(), 8, 2);
 	}
 	//
 	// @Secured({Role.Admin})
