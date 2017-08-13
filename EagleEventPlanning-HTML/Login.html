@@ -48,10 +48,7 @@ $(document).ready(function() {
 $("#loginForm").submit(function (e){
 		var userName = $('#userName').val();
         var password = $('#password').val();
-<<<<<<< HEAD
 
-=======
->>>>>>> branch 'master' of https://github.com/zkastl/EagleCatering.git
 		$.ajax( { 
 			url:"/EagleEventPlanning/services/login/",
 			type: "POST",
@@ -65,11 +62,7 @@ $("#loginForm").submit(function (e){
 			200: function(response) {
 				  document.cookie="token=" + response.responseText;
 				  $("#page-message").html("Logged in");
-                  // TODO send to appropriate page
-<<<<<<< HEAD
 				  window.location.assign("events.html");
-=======
->>>>>>> branch 'master' of https://github.com/zkastl/EagleCatering.git
 		  		},
 		  	406: function(response) {
 		  		var errors = response.responseJSON;
