@@ -1,7 +1,5 @@
 package REST;
 
-import java.util.ArrayList;
-
 import javax.persistence.EntityTransaction;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -13,15 +11,12 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
 import DataAccessObjects.EM;
-import ProblemDomain.Event;
 //import schoolPD.Student;
 //import schoolUT.Message;
 import ProblemDomain.EventPlanner;
-import ProblemDomain.Guest;
 //import systemPD.RoleAssignment;
-import ProblemDomain.System;
+import ProblemDomain.EventSystem;
 import ProblemDomain.Token;
-import TableSorter.Layout;
 
 @Path("/system")
 public class SystemService {
@@ -55,7 +50,7 @@ public class SystemService {
 	private void authenticate(String username, String password) throws Exception {
 		// Authenticate against a database, LDAP, file or whatever
 		// Throw an Exception if the credentials are invalid
-		EventPlanner planner = System.findEventPlannerByUserName(username);
+		EventPlanner planner = EventSystem.findEventPlannerByUserName(username);
 		if (planner == null)
 			throw new Exception();
 		if (!planner.authenticate(password))
@@ -69,21 +64,23 @@ public class SystemService {
 		// Return the issued token
 		EntityTransaction userTransaction = EM.getEM().getTransaction();
 		userTransaction.begin();
-		Token token = new Token(System.findEventPlannerByUserName(username));
+		Token token = new Token(EventSystem.findEventPlannerByUserName(username));
 		token.save();
 		userTransaction.commit();
 		return token.getToken();
 	}
 
-	@POST
-	@Path("/events")
-	@Consumes(MediaType.TEXT_PLAIN)
-	@Produces(MediaType.TEXT_PLAIN)
-	public Layout getLayout(String guestList) throws Exception {
-		Event t = new Event();
-		t.importGuests(guestList);
-		return Layout.createRandomTableLayout((ArrayList<Guest>) t.getGuestList().values(), 8, 2);
-	}
+	// @POST
+	// @Path("/events")
+	// @Consumes(MediaType.TEXT_PLAIN)
+	// @Produces(MediaType.TEXT_PLAIN)
+	// public Layout getLayout(String guestList) throws Exception {
+	// Event t = new Event();
+	// t.importGuests(guestList);
+	// return Layout.createRandomTableLayout((ArrayList<Guest>)
+	// t.getGuestList().values(), 8, 2);
+	// }
+
 	//
 	// @Secured({Role.Admin})
 	// @GET

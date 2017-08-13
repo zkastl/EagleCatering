@@ -13,7 +13,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.ext.Provider;
 
-import ProblemDomain.System;
+import ProblemDomain.EventSystem;
 import ProblemDomain.Token;
 
 @Secured
@@ -87,7 +87,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 	}
 
 	private String validateToken(String stringToken) throws Exception {
-		Token systemToken = System.findToken(stringToken);
+		Token systemToken = EventSystem.findToken(stringToken);
 		if (systemToken == null || !systemToken.validate())
 			throw new Exception();
 		return systemToken.getEventPlanner().getUserName();
