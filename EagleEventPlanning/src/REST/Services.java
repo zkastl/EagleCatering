@@ -54,7 +54,7 @@ public class Services {
 	@Context ServletContext context;
 	
 	@POST
-	@Path("/hello/{id}/uploadfile")
+	@Path("/import/{id}/uploadfile")
 	@Produces(MediaType.MULTIPART_FORM_DATA)
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public Response helloPost(@PathParam("id") String id,

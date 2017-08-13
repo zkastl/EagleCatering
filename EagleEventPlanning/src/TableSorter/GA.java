@@ -16,11 +16,18 @@ public class GA {
 	private static int FITNESS_THRESHOLD = 1000;
 	private static int MAX_GENERATIONS = 2000;
 	private static Random random = new Random();
+	private static Comparator<Layout> descendCompare = new Comparator<Layout>() {
+				
+				@Override
+				public int compare(Layout l1, Layout l2) {
+					return -(l1.fitnessScore.compareTo(l2.fitnessScore));
+				}
+			};
 
 	private GA() {
 	}
 
-	private static List<Layout> breed(List<Layout> population, double deathRate) {
+	private static ArrayList<Layout> breed(List<Layout> population, double deathRate) {
 
 		ArrayList<Layout> selected = new ArrayList<Layout>();
 		ArrayList<Layout> children = new ArrayList<Layout>();
@@ -109,34 +116,43 @@ public class GA {
 
 	public static void runGA(ArrayList<Guest> guests, int tableCapacity, int emptySeats) throws Exception {
 		
-		ArrayList<Layout> population = new ArrayList<Layout>();
-		Layout maxFit = null;
-
-		for (Layout l : population)
-			if (maxFit == null || l.fitnessScore > maxFit.fitnessScore)
-				maxFit = l;
-
-		while (population.size() == 0 || maxFit.fitnessScore < FITNESS_THRESHOLD) {
-			for (int genome = 0; genome < POPULATION_SIZE; genome++) {
-
-				Layout layout = Layout.createRandomTableLayout(guests, tableCapacity, emptySeats);
-				population.add(layout);
-			}
-
-			List<Layout> children = breed(population, DEATH_RATE);
-			mutate(children, MUTATION_RATE);
-
-			// Sort ascending
-			population.sort(Comparator.comparing(Layout::evaluateFitness));
-
-			// This SHOULD remove the first n elements of the population,
-			// where n is one of the lowest fitness scores.
-			for (int i = 0; i < children.size(); i++)
-				population.remove(i);
-
-			population.addAll(children);
-			population.get(population.size() - 1).printLayout();
+		if(guests == null || guests.size() == 0) {
+			System.out.println("invalid parameters: empty guest list");
+			throw new Exception();
 		}
+				
+		ArrayList<Layout> population = new ArrayList<Layout>();
+		int generation = 1;
+		int maxFit = 0;
+
+		for(int genome = 0; genome < POPULATION_SIZE; genome++) {			
+			Layout layout = Layout.createRandomTableLayout(guests, tableCapacity, emptySeats);
+			layout.evaluateFitness();
+			population.add(layout);
+		}
+		
+		while(generation < MAX_GENERATIONS) {
+			ArrayList<Layout> children = breed(population, DEATH_RATE);
+			mutate(children, MUTATION_RATE);
+			
+			// Sort by descending fitness values
+			population.sort(descendCompare);
+			
+			// kill the last X elements of the population, where x is the size of the array of children
+			population.removeIf(x -> population.indexOf(x) >= (population.size() - children.size()));
+			
+			// Add the children to the population
+			population.addAll(children);
+			
+			// Sort the new population by descending fitness scores
+			population.sort(descendCompare);
+			
+			if (generation % 10 == 0)
+				System.out.println("Generation "+ generation + " - Max Fitness: " + population.get(0).fitnessScore );
+			generation++;			
+		}
+		
+		population.get(0).printLayout();
 	}
 
 	private static void mutate(List<Layout> children, double mutationRate) {

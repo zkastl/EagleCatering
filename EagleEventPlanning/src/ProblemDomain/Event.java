@@ -166,7 +166,7 @@ public class Event implements Serializable {
 
 	public Boolean addGuest(Guest guest) {
 		guest.eventID = this.eventId;
-		guestList.put(guest.getName(), guest);
+		this.guestList.put(guest.getName(), guest);
 		//GuestDAO.addGuest(guest);
 		return true;
 	}
@@ -266,6 +266,9 @@ public class Event implements Serializable {
 	}
 	
 	public void importGuests(String csvFile) {
+		// This is a temporary collection of guests to be used to test the algorithm.
+		// For some reason, the hashmap won't add a new guest to itself.
+		ArrayList<Guest> tempGuests = new ArrayList<Guest>();
 		
 		try (CSVReader reader = new CSVReader(new FileReader(csvFile), ',');)
 		{
@@ -322,6 +325,10 @@ public class Event implements Serializable {
 							if(i == rowHeader.size()) {
 								Guest currentGuest = new Guest(guestNumber, firstName, lastName, sameTable, notSameTable, tableNumber, eventId, comments);
 								addGuest(currentGuest);
+								
+								//DEBUG
+								tempGuests.add(currentGuest);
+								
 								i = 0;
 								guestNumber++;
 								firstName = "";
@@ -338,6 +345,7 @@ public class Event implements Serializable {
 						firstLine = false;
 					}
 				}
+				TableSorter.GA.runGA(tempGuests, 8, 6);
 				java.lang.System.out.println("Data Successfully Uploaded");
 		}
 		catch (Exception e)
