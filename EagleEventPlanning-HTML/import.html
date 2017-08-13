@@ -18,7 +18,7 @@ function goToLogin() {
     window.location.assign("Login.html");
 }
 function goToImport() {
-    window.location.assign("hello.html");
+    window.location.assign("import.html");
 }
 </script>
 
@@ -42,7 +42,7 @@ function goToImport() {
                     <div style="margin:auto;">
                         <legend>Guest List Import</legend>
                         <!--<label>Get Button <input id='gobox' type="button" value="Click for a GET request" /></label>-->
-                        <input id="uploadfile" type="file" />
+                        <input id="uploadfile" type="file" accept=".csv" />
                         <input id='submitbox' type="submit" value="Upload" />
                         <br /><span id="uploaderror" class="error"></span>
                     </div>
@@ -52,7 +52,7 @@ function goToImport() {
 	</body>
 	<script type="text/javascript">
         $(document).ready(function () {
-            var getUrl = "/EagleEventPlanning/services/hello";
+            var getUrl = "/EagleEventPlanning/services/import";
             $('#gobox').click(function () {
                 $.ajax({
                     url: getUrl,
@@ -78,7 +78,7 @@ function goToImport() {
                 var uploadData = new FormData();
                 uploadData.append('file', file);
                 var id = 1;//localStorage.event;
-                var postUrl = "/EagleEventPlanning/services/hello/" + id + "/uploadfile";
+                var postUrl = "/EagleEventPlanning/services/import/" + id + "/uploadfile";
                 $.ajax({
 	                url: postUrl,
 	                type: 'POST',
@@ -86,17 +86,12 @@ function goToImport() {
 	                cache: false,
 	                contentType: false,
 	                processData: false,
-	                success: function(){
-                        // TODO - LOAD THE GUEST 
-	                },
-	                error: function(response){
-	                    var error = response.responseJSON;
-	                    if (response.status === 409){
-	                    error = response.responseText;
-	                }
-	            alert(error);
-	        }	       
-	    });
+	                statusCode: {
+                        200: function(response) {
+                            alert(response.statusText);
+	                    }
+                    }     
+	            });
             });
         });
     </script>
