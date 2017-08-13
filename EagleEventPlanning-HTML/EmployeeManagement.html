@@ -26,7 +26,7 @@
 
 
 <div align="center">
-	<div style="background: white; width: 80%; height: 300px; margin:20px;">
+	<div style="background: white; width: 80%; height: 300px; border-style: solid; border-width: 2px; margin:20px;">
 		<h2>Event Planners</h2><br>
 		<table class="center" id="eventPlanners"></table>
 
@@ -88,7 +88,7 @@
     
     function getCurrentUser() {
     	$.ajax({
-    	    url: "/EagleEventPlanning/system/employees/current",
+    	    url: "/EagleEventPlanning/services/employees/current",
     	    type: 'GET',
     	    datatype: 'json',
     	    statusCode: {
@@ -110,7 +110,7 @@
     function createTable(start) {
 
     	$.ajax({
-    	    url: "/EagleEventPlanning/system/employees?page="+start+"&per_page="+page,
+    	    url: "/EagleEventPlanning/services/employees?page="+start+"&per_page="+page,
     	    type: 'GET',
     	    datatype: 'json',
     	    statusCode: {
@@ -125,7 +125,7 @@
   	    		$('#eventPlanners').html("You must Login first");
   	    		},
     	    403:function( response ) {
-  	    		$('#eventPlanners').html("Access to the page forbiden");
+  	    		$('#eventPlanners').html("Access to the page forbidden");
   	    		}
     	    },
   	    

@@ -1,22 +1,30 @@
 package ProblemDomain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import DataAccessObjects.EventPlannerDAO;
+import DataAccessObjects.RoleAssignmentDAO;
 
 @XmlRootElement(name = "eventplanner")
 @Entity(name = "eventplanner")
 public class EventPlanner implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+
+	@OneToMany(mappedBy = "planner", targetEntity = RoleAssignment.class, fetch = FetchType.EAGER)
+	private Collection<RoleAssignment> roleAssignments;
 
 	@Id // signifies the primary key
 	@Column(name = "eventPlanner_id", nullable = false)
@@ -38,9 +46,6 @@ public class EventPlanner implements Serializable {
 	@Column(name = "password", nullable = false, length = 50)
 	private String password;
 
-	@Column(name = "role", nullable = false, length = 50)
-	private String role;
-
 	public EventPlanner() {
 	}
 
@@ -51,12 +56,14 @@ public class EventPlanner implements Serializable {
 		this.email = email;
 		this.userName = userName;
 		this.password = password;
-		this.role = role;
-
 	}
 
 	public long getEventPlannerId() {
 		return eventPlannerId;
+	}
+
+	public Collection<RoleAssignment> getRoleAssignments() {
+		return this.roleAssignments;
 	}
 
 	public void setId(int eventPlannerId) {
@@ -79,6 +86,11 @@ public class EventPlanner implements Serializable {
 	@XmlElement
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
+	}
+
+	@XmlElement
+	public void setRoleAssignments(Collection<RoleAssignment> roleAssignments) {
+		this.roleAssignments = roleAssignments;
 	}
 
 	public String getEmail() {
@@ -108,15 +120,6 @@ public class EventPlanner implements Serializable {
 		this.password = password;
 	}
 
-	public String getRole() {
-		return role;
-	}
-
-	@XmlElement
-	public void setRole(String role) {
-		this.role = role;
-	}
-
 	public Boolean save() {
 
 		EventPlannerDAO.saveEventPlanner(this);
@@ -139,13 +142,42 @@ public class EventPlanner implements Serializable {
 		setEmail(eventPlanner.getEmail());
 		setUserName(eventPlanner.getUserName());
 		setPassword(eventPlanner.getPassword());
-		setRole(eventPlanner.getRole());
+		if (eventPlanner.getRoleAssignments() != null) {
+			for (RoleAssignment ra : this.getRoleAssignments()) {
+				removeRoleAssignment(ra);
+			}
+			for (RoleAssignment ra : eventPlanner.getRoleAssignments()) {
+				addRoleAssignment(ra);
+			}
+		}
 
 		return true;
 	}
 
 	public boolean authenticate(String password) {
 		return this.password.equals(password);
+	}
+
+	public ArrayList<Message> validate() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void removeRoleAssignment(RoleAssignment ra) {
+		RoleAssignmentDAO.removeRoleAssignment(ra);
+	}
+
+	public void addRoleAssignment(RoleAssignment ra) {
+		ra.setEventPlanner(this);
+		RoleAssignmentDAO.saveRoleAssignment(ra);
+	}
+
+	public boolean isAuthorized(Role role) {
+		for (RoleAssignment ra : getRoleAssignments()) {
+			if (ra.getRole().equals(role))
+				return true;
+		}
+		return false;
 	}
 
 }

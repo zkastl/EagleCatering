@@ -47,11 +47,11 @@ public class Event implements Serializable {
 	private String location;
 
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "eventPlanner", referencedColumnName = "name")
+	@JoinColumn(name = "eventPlanner", referencedColumnName = "eventPlanner_id")
 	public EventPlanner eventPlanner;
 
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "client", referencedColumnName = "name")
+	@JoinColumn(name = "client", referencedColumnName = "client_id")
 	public Client client;
 
 	@OneToMany(mappedBy = "event", targetEntity = Guest.class, fetch = FetchType.EAGER)

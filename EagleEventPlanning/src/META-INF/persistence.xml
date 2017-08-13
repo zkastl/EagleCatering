@@ -8,7 +8,7 @@
     <class>ProblemDomain.Event</class>
     <class>ProblemDomain.EventPlanner</class>
     <class>ProblemDomain.Guest</class>
-    <class>ProblemDomain.SeatingArrangement</class>
+    <class>ProblemDomain.RoleAssignment</class>
     <class>ProblemDomain.Table</class>
     <class>ProblemDomain.Token</class>
          

@@ -48,7 +48,7 @@ public class EventSystem {
 		return true;
 	}
 
-	public static Boolean removeUser(EventPlanner planner) {
+	public static Boolean removeEventPlanner(EventPlanner planner) {
 		EventPlannerDAO.removeEventPlanner(planner);
 		return true;
 	}
