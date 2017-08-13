@@ -7,27 +7,21 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
 </head>
 <body>
-<script>
-function goHome() {
-	window.location.assign("MainPage.html");
-}
-function goToContact() {
-	window.location.assign("ContactInfo.html");
-}
-function goToLogin() {
-	window.location.assign("Login.html");
-}
-function goToImport() {
-	window.location.assign("import.html");
-}
-</script>
 
 <h1>Eagle Event Planning</h1>
 <div style="color: white; background: gray; width: 100%; font-size: 12;">
-	<input id="Home" value="Home" type="button" onclick="goHome()" style="color: white; background: gray;">
-	<input id="Contact" value="Contact" type="button" onclick="goToContact()" style="color: white; background: gray;">
-	<input id="Login" value="Login" type="button" onclick="goToLogin()" style="color: white; background: gray;">
-	<input id="Import" value="Import" type="button" onclick="goToImport()" style="color: white; background: gray;">	
+<table class="nav">
+	<tr>
+		<td><a href="MainPage.html">Home</a></td>
+		<td><a href="contactinfo.html">Contact</a></td>
+		<td><a href="events.html">Events</a></td>
+		<td><a href="import.html">Import</a></td>	
+		<td><a href="ClientManagement.html">Clients</a></td>
+		<td><a href="EmployeeManagement.html">Employees</a></td>
+		<td><a href="logout.html">Logout</a></td>
+		<td id="userWelcome" style="text-align: right; width: 100%"></td>
+	</tr>
+	</table>
 </div>
 
 <div id="content" align="center" style="background: white; width:75%; font-size: 12;">
