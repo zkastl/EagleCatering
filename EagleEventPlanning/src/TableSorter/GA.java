@@ -56,21 +56,23 @@ public class GA {
 		// Get the count of the layouts		
 		// really hope this pass-by-value
 		Random rand = new Random();
-		Layout child = new Layout(mother.tableList);		
+		Layout child = new Layout(mother.tableList);
 		int numberChromosomesToSelect = Math.floorDiv(child.getGuests().size(), 2);
 		
 		for(int i = 0; i < numberChromosomesToSelect; i++)
 		{
 			// select a random number
-			int r = rand.nextInt(numberChromosomesToSelect);
-			Guest selectedGuest = null, fathersGuest = null, swappedGuest = null;
+			int selected = rand.nextInt(numberChromosomesToSelect);
+			Guest selectedGuest = new Guest();
+			Guest fathersGuest = new Guest();
+			Guest swappedGuest = new Guest();
 			
 			for (Guest g : child.getGuests())
-				if(g.guestNumber == r)
+				if(g.guestNumber == selected)
 					selectedGuest = g;
 			
 			for (Guest g : father.getGuests())
-				if(g.guestNumber == r)
+				if(g.guestNumber == selected)
 					fathersGuest = g;
 			
 			for (Guest g : child.getGuests())
