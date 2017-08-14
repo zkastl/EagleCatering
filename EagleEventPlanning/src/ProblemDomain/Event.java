@@ -326,7 +326,7 @@ public class Event implements Serializable {
 						if (i == rowHeader.size()) {
 							Guest currentGuest = new Guest(guestNumber, firstName, lastName, sameTable, notSameTable,
 									tableNumber, eventId, comments);
-							addGuest(currentGuest);
+							//addGuest(currentGuest);
 
 							// DEBUG
 							tempGuests.add(currentGuest);
