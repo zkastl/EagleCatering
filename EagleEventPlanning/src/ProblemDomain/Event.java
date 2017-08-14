@@ -291,24 +291,26 @@ public class Event implements Serializable {
 					} else { // set the appropriate field
 						String value = rowHeader.get(i);
 						switch (value) {
-						case "firstName":
+						case "Guest #":
+							//guestNumber = Integer.parseInt(data);
+						case "First Name":
 							firstName = data;
 							break;
-						case "lastName":
+						case "Last Name":
 							lastName = data;
 							break;
-						case "sameTable":
+						case "Same Table":
 							if (!data.equals(""))
 								sameTable.add(Integer.parseInt(data));
 							break;
-						case "notSameTable":
+						case "Not Same Table":
 							if (!data.equals(""))
 								notSameTable.add(Integer.parseInt(data));
 							break;
-						case "tableNumber":
+						case "Table Number":
 							tableNumber = Integer.parseInt(data);
 							break;
-						case "comments":
+						case "Comments":
 							comments = data;
 							break;
 						default:

@@ -1,0 +1,152 @@
+<!DOCTYPE HTML> 
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="style.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+
+</head>
+<body>
+<script>
+function getCurrentUser() {
+    	$.ajax({
+    	    url: "/EagleEventPlanning/services/employees/current",
+    	    type: 'GET',
+    	    datatype: 'json',
+    	    statusCode: {
+    	    200: function( planner ) {
+    	
+    			$('#userWelcome').html("Welcome, "+planner.name);
+    	    },
+    	    401:function( response ) {
+    	    		$('#deleteMessage').html("You must Login first");}
+    	    },
+    	    
+    	    error: function(jqXHR, textStatus, errorThrown) {
+      	        console.log("error " + textStatus);
+      	        console.log("incoming Text " + jqXHR.responseText);},
+    	    beforeSend: setHeader       
+    	  });   	
+    }
+  
+	function getCookie(cname) {
+	    var name = cname + "=";
+	    var decodedCookie = decodeURIComponent(document.cookie);
+	    var ca = decodedCookie.split(';');
+	    for(var i = 0; i <ca.length; i++) {
+	        var c = ca[i];
+	        while (c.charAt(0) == ' ') {
+	            c = c.substring(1);
+	        }
+	        if (c.indexOf(name) == 0) {
+	            return c.substring(name.length, c.length);
+	        }
+	    }
+	    return "";
+	}
+	
+	function setHeader(xhr) {
+		  token = getCookie("token");
+		  xhr.setRequestHeader('Authorization', 'Bearer '+token );		  
+	}
+</script>
+
+<h1>Eagle Event Planning</h1>
+<div style="color: white; background: gray; width: 100%; font-size: 12;">
+	<table class="nav">
+	<tr>
+		<td><a href="MainPage.html">Home</a></td>
+		<td><a href="contactinfo.html">Contact</a></td>
+		<td><a href="events.html">Events</a></td>
+		<td><a href="import.html">Import</a></td>	
+		<td><a href="ClientManagement.html">Clients</a></td>
+		<td><a href="EmployeeManagement.html">Employees</a></td>
+		<td><a href="logout.html">Logout</a></td>
+		<td id="userWelcome" style="text-align: right; width: 100%"></td>
+	</tr>
+	</table>
+</div>
+
+<div align="center">
+	<div style="background: white; width: 80%; border-style: solid; border-width: 2px; margin:20px;">
+<h2>Add Client</h2>
+<p id ='debug'></p>
+<div class ='block-center'>
+<p><span id="page-message">Enter fields and click Save</span></p>
+<p><span class="error-head">* required field.</span></p>
+<form id="clientForm" method="post"> 
+   Name: <input type="text" id="name">
+   <span id="nameErr" class="error">* </span>
+   <br><br>
+   E-mail: <input type="text" id="email" >
+   <span id="emailErr" class="error">* </span>
+   <br><br>
+   Phone #: <input type="text" id="phoneNumber" >
+   <span id="phoneErr" class="error">* </span>
+   <br><br>
+	<br><br>
+   <input type="submit" name="submit" value="Save"> 
+</form>
+<form action="ClientManagement.html" method ="get">
+<button type="submit" >Cancel</button>
+</form>
+</div>
+</div>
+</div>
+<script>
+$(document).ready(function() {
+
+	getCurrentUser();
+	$("#clientForm").submit(function (e){
+			
+			var name = $('#name').val();
+			var email = $('#email').val();
+			var phoneNumber = $('#phoneNumber').val();
+			
+			var jsonData = 
+						'{'+  
+						'"name" :"'+ name +'",'+
+						'"email" : "'+email+'",'+
+						'"phoneNumber" : "'+phoneNumber+'"}';
+					
+			$.ajax( { 
+				url:"/EagleEventPlanning/services/clients/",
+				type: "POST",
+				dataType: "json",
+				contentType: "application/json",
+				data: jsonData,  
+			statusCode: {
+				200: function(response) {
+					  $("#page-message").html("Record Added");
+					  window.location.assign("ClientManagement.html");
+			  		},
+			  	401:function( response ) {
+		    			$('#page-messge').html("You must Login first");
+		    			},
+			  	405:function( response ) {
+		  	    		$('#page-messge').html("Access to the page forbiden");
+		  	    		},
+			  	406: function(response) {
+			  		var errors = response.responseJSON;
+			  		$(".error").html("*");
+			  		$.each(errors, function (i, message) {
+			  			$("#"+message.attributeName+"Err").html(message.message);
+			  			console.log("Error "+message.attributeName +" "+message.message)
+	    	        		});
+			  		$("#page-message").html("Fix errors and click Save");
+			  		},
+			  					  	
+				404: function(jqXHR, textStatus, errorThrown) {
+					$("#page-message").html("Error:"+textStatus);
+					console.log(errorThrown);
+		  	        console.log("error " + textStatus);
+		  	        console.log("incoming Text " + jqXHR.responseText);
+		  	      }
+				},
+				beforeSend: setHeader
+			});
+			e.preventDefault();
+	});
+	});
+</script>
+</body>
+</html>

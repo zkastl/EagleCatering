@@ -30,6 +30,7 @@ import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import DataAccessObjects.EM;
+import ProblemDomain.Client;
 import ProblemDomain.Event;
 import ProblemDomain.EventPlanner;
 import ProblemDomain.EventSystem;
@@ -58,7 +59,7 @@ public class Services {
 	@Context
 	ServletContext context;
 
-	//@Secured({Role.EventPlanner})
+	@Secured
 	@POST
 	@Path("/import/{id}/uploadfile")
 	@Produces(MediaType.MULTIPART_FORM_DATA)
@@ -108,15 +109,6 @@ public class Services {
 		}
 	}
 
-	@Secured({ Role.Admin })
-	@GET
-	@Path("/employees")
-	@Produces(MediaType.APPLICATION_JSON)
-	public List<EventPlanner> getEventPlanner(@DefaultValue("0") @QueryParam("page") String page,
-			@DefaultValue("15") @QueryParam("per_page") String perPage) {
-		return EventSystem.findAllEventPlanners(Integer.parseInt(page), Integer.parseInt(perPage));
-	}
-
 	@Secured
 	@GET
 	@Path("/employees/current")
@@ -125,6 +117,15 @@ public class Services {
 		String username = securityContext.getUserPrincipal().getName();
 		EventPlanner planner = EventSystem.findEventPlannerByUserName(username);
 		return planner;
+	}
+
+	@Secured({ Role.Admin })
+	@GET
+	@Path("/employees")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<EventPlanner> getEventPlanner(@DefaultValue("0") @QueryParam("page") String page,
+			@DefaultValue("15") @QueryParam("per_page") String perPage) {
+		return EventSystem.findAllEventPlanners(Integer.parseInt(page), Integer.parseInt(perPage));
 	}
 
 	@Secured({ Role.Admin })
@@ -259,6 +260,144 @@ public class Services {
 
 		Boolean result = EventSystem.removeEventPlanner(planner);
 		plannerTransaction.commit();
+		if (result) {
+			messages.add(new Message("op001", "Success Operation", ""));
+			return messages;
+		} else {
+			messages.add(new Message("op002", "Fail Operation", ""));
+			return messages;
+		}
+	}
+
+	@Secured
+	@GET
+	@Path("/clients")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Client> getClient(@DefaultValue("0") @QueryParam("page") String page,
+			@DefaultValue("15") @QueryParam("per_page") String perPage) {
+		return EventSystem.findAllClients(Integer.parseInt(page), Integer.parseInt(perPage));
+	}
+
+	@Secured
+	@GET
+	@Path("/clients/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Client getClient(@PathParam("id") String id) {
+		Client client = EventSystem.findClientById(id);
+		EM.getEM().refresh(client);
+		return client;
+	}
+
+	@Secured
+	@POST
+	@Path("/clients")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public ArrayList<Message> addClient(Client client, @Context final HttpServletResponse response) throws IOException {
+
+		if (client == null) {
+
+			response.setStatus(HttpServletResponse.SC_EXPECTATION_FAILED);
+			try {
+				response.flushBuffer();
+			} catch (Exception e) {
+			}
+			messages.add(new Message("op002", "Fail Operation", ""));
+			return messages;
+		} else {
+
+			ArrayList<Message> errMessages = client.validate();
+			if (errMessages != null) {
+
+				response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
+				try {
+					response.flushBuffer();
+				} catch (Exception e) {
+				}
+				return errMessages;
+			}
+			EntityTransaction clientTransaction = EM.getEM().getTransaction();
+			clientTransaction.begin();
+			Boolean result = EventSystem.addClient(client);
+			clientTransaction.commit();
+			if (result) {
+				messages.add(new Message("op001", "Success Operation", ""));
+				return messages;
+			}
+			response.setStatus(HttpServletResponse.SC_EXPECTATION_FAILED);
+			try {
+				response.flushBuffer();
+			} catch (Exception e) {
+			}
+			messages.add(new Message("op002", "Fail Operation", ""));
+			return messages;
+		}
+	}
+
+	@Secured
+	@PUT
+	@Path("/clients/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public ArrayList<Message> udpateClient(Client client, @PathParam("id") String id,
+			@Context final HttpServletResponse response) throws IOException {
+		Client oldClient = EventSystem.findClientById(id);
+		if (oldClient == null) {
+			response.setStatus(HttpServletResponse.SC_EXPECTATION_FAILED);
+			try {
+				response.flushBuffer();
+			} catch (Exception e) {
+			}
+			messages.add(new Message("op002", "Fail Operation", ""));
+			return messages;
+		} else {
+			ArrayList<Message> errMessages = client.validate();
+			if (errMessages != null) {
+				response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
+				try {
+					response.flushBuffer();
+				} catch (Exception e) {
+				}
+				return errMessages;
+			}
+		}
+		EntityTransaction clientTransaction = EM.getEM().getTransaction();
+		clientTransaction.begin();
+		Boolean result = oldClient.update(client);
+		clientTransaction.commit();
+		if (result) {
+			messages.add(new Message("op001", "Success Operation", ""));
+			return messages;
+		}
+		response.setStatus(HttpServletResponse.SC_EXPECTATION_FAILED);
+		try {
+			response.flushBuffer();
+		} catch (Exception e) {
+		}
+		messages.add(new Message("op002", "Fail Operation", ""));
+		return messages;
+	}
+
+	@Secured
+	@DELETE
+	@Path("/clients/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public ArrayList<Message> deleteClient(@PathParam("id") String id, @Context final HttpServletResponse response) {
+		Client client = EventSystem.findClientById(id);
+		if (client == null) {
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			try {
+				response.flushBuffer();
+			} catch (Exception e) {
+			}
+			messages.add(new Message("op002", "Fail Operation", ""));
+			return messages;
+		}
+		EntityTransaction clientTransaction = EM.getEM().getTransaction();
+		clientTransaction.begin();
+
+		Boolean result = EventSystem.removeClient(client);
+		clientTransaction.commit();
 		if (result) {
 			messages.add(new Message("op001", "Success Operation", ""));
 			return messages;
