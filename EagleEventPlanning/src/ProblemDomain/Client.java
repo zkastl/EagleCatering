@@ -1,6 +1,7 @@
 package ProblemDomain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -100,6 +101,11 @@ public class Client implements Serializable {
 		setEmail(client.getEmail());
 
 		return true;
+	}
+
+	public ArrayList<Message> validate() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -18,8 +18,8 @@ public class ClientDAO {
 		return query.getResultList();
 	}
 
-	public static Client findClientById(int id) {
-		Client client = EM.getEM().find(Client.class, new Integer(id));
+	public static Client findClientById(long id) {
+		Client client = EM.getEM().find(Client.class, new Long(id));
 		return client;
 	}
 
