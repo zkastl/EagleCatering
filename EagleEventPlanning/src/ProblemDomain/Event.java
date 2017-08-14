@@ -347,7 +347,7 @@ public class Event implements Serializable {
 					firstLine = false;
 				}
 			}
-			TableSorter.GA.runGA(tempGuests, 8, 6);
+			TableSorter.GA.runGA(tempGuests, 8, 2);
 			java.lang.System.out.println("Data Successfully Uploaded");
 		} catch (Exception e) {
 			e.printStackTrace();

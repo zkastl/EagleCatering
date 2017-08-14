@@ -41,7 +41,7 @@ public class Layout implements Comparable<Layout> {
 		ArrayList<Table> tableList = new ArrayList<Table>();
 		tableList.add(new Table(numberCurrentTables, capacity, numEmptySeats));
 
-		Collections.shuffle(tableList);
+		Collections.shuffle(guestList);
 
 		for (Guest g : guestList) {
 			if (!tableList.get(tableList.size() - 1).addGuest(g)) {
