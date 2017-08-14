@@ -20,14 +20,18 @@ table {
 }
 
 table, th, td {
-	border: none;
+    border: 1px solid black;
     padding : 10px;
     text-align: left;
 }
 
+.nav td {
+	border: none;
+}
+
 th {
-	background-color: black;
-    color: white;
+	background-color: #ff8040;
+    color: black;
 }
 input[type="text"]
 {
@@ -70,6 +74,7 @@ form.inline {
 .error,.error-head {color: #FF0000;}
 
 .nav{
+	border:none;
     list-style:none;
     margin:0;
     padding:0;

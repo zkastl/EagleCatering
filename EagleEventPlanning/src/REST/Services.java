@@ -1,10 +1,6 @@
 package REST;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,11 +22,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
-import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
-import org.glassfish.jersey.media.multipart.FormDataParam;
-
 import DataAccessObjects.EM;
-import ProblemDomain.Event;
 import ProblemDomain.EventPlanner;
 import ProblemDomain.EventSystem;
 import ProblemDomain.Message;
@@ -58,42 +50,44 @@ public class Services {
 	@Context
 	ServletContext context;
 
-	@POST
-	@Path("/import/{id}/uploadfile")
-	@Produces(MediaType.MULTIPART_FORM_DATA)
-	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	public Response helloPost(@PathParam("id") String id, @FormDataParam("file") InputStream uploadInputStream,
-			@FormDataParam("file") FormDataContentDisposition fileDetail) {
-
-		// Save the file to the server
-		try {
-			File tempFile = File.createTempFile("upload" + "001", ".tmp");
-			String lastUploadedFile = tempFile.getAbsolutePath();
-			OutputStream out = new FileOutputStream(tempFile);
-
-			// Leaving this code cause I might want it later.
-			/*
-			 * BufferedReader buf = new BufferedReader(new
-			 * InputStreamReader(uploadInputStream)); StringBuilder sb = new
-			 * StringBuilder(); String line; while ((line = buf.readLine()) !=
-			 * null) { sb.append(line).append("\n"); }
-			 * System.out.println(sb.toString());
-			 */
-
-			int read = 0;
-			byte[] bytes = new byte[1024];
-			while ((read = uploadInputStream.read(bytes)) != -1) {
-				out.write(bytes, 0, read);
-			}
-
-			Event e = new Event();
-			e.importGuests(lastUploadedFile);
-			out.close();
-		} catch (IOException ioex) {
-			ioex.printStackTrace();
-		}
-		return Response.status(200).entity("File uploaded succsssfully!").build();
-	}
+	// @POST
+	// @Path("/import/{id}/uploadfile")
+	// @Produces(MediaType.MULTIPART_FORM_DATA)
+	// @Consumes(MediaType.MULTIPART_FORM_DATA)
+	// public Response helloPost(@PathParam("id") String id,
+	// @FormDataParam("file") InputStream uploadInputStream,
+	// @FormDataParam("file") FormDataContentDisposition fileDetail) {
+	//
+	// // Save the file to the server
+	// try {
+	// File tempFile = File.createTempFile("upload" + "001", ".tmp");
+	// String lastUploadedFile = tempFile.getAbsolutePath();
+	// OutputStream out = new FileOutputStream(tempFile);
+	//
+	// // Leaving this code cause I might want it later.
+	// /*
+	// * BufferedReader buf = new BufferedReader(new
+	// * InputStreamReader(uploadInputStream)); StringBuilder sb = new
+	// * StringBuilder(); String line; while ((line = buf.readLine()) !=
+	// * null) { sb.append(line).append("\n"); }
+	// * System.out.println(sb.toString());
+	// */
+	//
+	// int read = 0;
+	// byte[] bytes = new byte[1024];
+	// while ((read = uploadInputStream.read(bytes)) != -1) {
+	// out.write(bytes, 0, read);
+	// }
+	//
+	// Event e = new Event();
+	// e.importGuests(lastUploadedFile);
+	// out.close();
+	// } catch (IOException ioex) {
+	// ioex.printStackTrace();
+	// }
+	// return Response.status(200).entity("File uploaded
+	// succsssfully!").build();
+	// }
 
 	@POST
 	@Path("/login")
