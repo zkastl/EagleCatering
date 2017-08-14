@@ -324,8 +324,9 @@ public class Event implements Serializable {
 						// number,
 						// there are other ways to track it - zak
 						if (i == rowHeader.size()) {
-							Guest currentGuest = new Guest(guestNumber, firstName, lastName, sameTable, notSameTable,
-									tableNumber, eventId, comments);
+							Guest currentGuest = new Guest(guestNumber, firstName, lastName,
+									new ArrayList<Integer>(sameTable), new ArrayList<Integer>(notSameTable),
+									tableNumber);
 							//addGuest(currentGuest);
 
 							// DEBUG

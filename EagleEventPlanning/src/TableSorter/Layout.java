@@ -55,63 +55,7 @@ public class Layout implements Comparable<Layout> {
 		Layout l = new Layout(tableList);
 		l.evaluateFitness();
 		return l;
-	}
-
-	public int evaluateFitness() {
-		if(tableList.size() == 0)
-			return 0;
-		
-		/*  '''
-        evaluating the fitness of a layout means that each guest is examined for its neighbors at the same table
-        a guest has people they can and cannot sit next to; the more times the rules are followed, the better the score
-       
-        HIGHER FITNESS SCORES ARE ALWAYS BETTER
-        '''
-        # Starting fitness score
-        self.fitness_score = 0
-
-        for guest in self.get_guests():
-
-            #good_neighbors = [neighbor for neighbor in self.get_guests() if neighbor.guest_number in guest.same_table]
-            #bad_neighbors = [neighbor for neighbor in self.get_guests() if neighbor.guest_number in guest.not_same_table]
-
-            #for neighbor in good_neighbors:
-            #    if guest.table_number == neighbor.table_number:
-            #        self.fitness_score += 1
-
-            #for neighbor in bad_neighbors:
-            #    if guest.table_number != neighbor.table_number:
-            #        self.fitness_score += 1
-
-            guest_table = [table for table in self.table_list if table.table_number == guest.table_number][0]
-            self.fitness_score += 1000 * len([neighbor for neighbor in guest_table.seated_guests if neighbor.guest_number in guest.same_table])
-            self.fitness_score += len([neighbor for neighbor in guest_table.seated_guests if neighbor.guest_number not in guest.not_same_table])*/
-		
-		// Starting fitness score
-		fitnessScore = 0;
-		Table guestTable;
-		
-		for(Guest guest : getGuests()) {
-			ArrayList<Guest> goodNeighbors = new ArrayList<Guest>();
-			ArrayList<Guest> badNeighbors = new ArrayList<Guest>();
-			
-			for(Guest g : getGuests())
-				if(guest.sameTable.contains(g.guestNumber))
-					goodNeighbors.add(g);
-			
-			for(Guest g : getGuests())
-				if(guest.notSameTable.contains(g.guestNumber))
-					badNeighbors.add(g);
-			
-			for(Table t : tableList)
-				if(t.tableNumber == guest.tableNumber)
-					guestTable = t;
-			
-			
-		}
-		
-		return 0;
-	}
+	}	
 
 	public void printLayout() {
 		System.out.println("***Table Layout***");
@@ -127,5 +71,58 @@ public class Layout implements Comparable<Layout> {
 	@Override
 	public int compareTo(Layout o) {
 		return this.fitnessScore.compareTo(o.fitnessScore);
+	}
+	
+	public int evaluateFitness() {
+		if(tableList.size() == 0)
+			return 0;
+		
+		// Starting fitness score
+		fitnessScore = 0;
+		int[] tableScores = new int[tableList.size()];
+		int index = 0;
+		
+		// Calculate the fitness of each table, average them?
+		//	A table's fitness is: 
+		
+		for(Table table : tableList) {
+			int t = 0;
+			for(Guest guest : table.seatedGuests) {
+				t += (goodGuestAtTable(guest.sameTable, table) + badGuestAtTable(guest.sameTable, table));
+			}
+			
+			tableScores[index] = t;
+			index++;
+		}
+		
+		for(int i : tableScores)
+			fitnessScore += i;
+		fitnessScore = Math.floorDiv(fitnessScore, tableScores.length); 
+		
+		return fitnessScore;
+	}
+	
+	private int goodGuestAtTable(List<Integer> potentialNeighbors, Table table) {
+		int guests = 0;
+		for(int i : potentialNeighbors) {
+			for(Guest g : table.seatedGuests) {
+				if(g.guestNumber == i)
+					guests += 1000;
+			}
+		}
+		
+		return guests;
+	}
+	
+	private int badGuestAtTable(List<Integer> potentialNeighbors, Table table) {
+		int guests = 0;
+		for(int i : potentialNeighbors) {
+			for(Guest g : table.seatedGuests) {
+				if(g.guestNumber == i)
+					guests += 1;
+			}
+		}
+		
+		return guests;
 	}
 }
