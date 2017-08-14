@@ -1,0 +1,199 @@
+<!DOCTYPE HTML> 
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="style.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+
+</head>
+<body>
+<script>
+function getCurrentUser() {
+    	$.ajax({
+    	    url: "/EagleEventPlanning/services/employees/current",
+    	    type: 'GET',
+    	    datatype: 'json',
+    	    statusCode: {
+    	    200: function( planner ) {
+    	
+    			$('#userWelcome').html("Welcome, "+planner.name);
+    	    },
+    	    401:function( response ) {
+    	    		$('#deleteMessage').html("You must Login first");}
+    	    },
+    	    
+    	    error: function(jqXHR, textStatus, errorThrown) {
+      	        console.log("error " + textStatus);
+      	        console.log("incoming Text " + jqXHR.responseText);},
+    	    beforeSend: setHeader       
+    	  });   	
+    }
+  
+	function getCookie(cname) {
+	    var name = cname + "=";
+	    var decodedCookie = decodeURIComponent(document.cookie);
+	    var ca = decodedCookie.split(';');
+	    for(var i = 0; i <ca.length; i++) {
+	        var c = ca[i];
+	        while (c.charAt(0) == ' ') {
+	            c = c.substring(1);
+	        }
+	        if (c.indexOf(name) == 0) {
+	            return c.substring(name.length, c.length);
+	        }
+	    }
+	    return "";
+	}
+	
+	function setHeader(xhr) {
+		  token = getCookie("token");
+		  xhr.setRequestHeader('Authorization', 'Bearer '+token );		  
+	}
+</script>
+
+<h1>Eagle Event Planning</h1>
+<div style="color: white; background: gray; width: 100%; font-size: 12;">
+	<table class="nav">
+	<tr>
+		<td><a href="MainPage.html">Home</a></td>
+		<td><a href="contactinfo.html">Contact</a></td>
+		<td><a href="events.html">Events</a></td>
+		<td><a href="import.html">Import</a></td>	
+		<td><a href="ClientManagement.html">Clients</a></td>
+		<td><a href="EmployeeManagement.html">Employees</a></td>
+		<td><a href="logout.html">Logout</a></td>
+		<td id="userWelcome" style="text-align: right; width: 100%"></td>
+	</tr>
+	</table>
+</div>
+
+<div align="center">
+	<div style="background: white; width: 80%; border-style: solid; border-width: 2px; margin:20px;">
+<h2>Add Event</h2>
+<p id ='debug'></p>
+<div class ='block-center'>
+<p><span id="page-message">Enter fields and click Save</span></p>
+<p><span class="error-head">* required field.</span></p>
+<form id="eventForm" method="post"> 
+   Name: <input type="text" id="name">
+   <span id="nameErr" class="error">* </span>
+   <br><br>
+   DateTime: <input type="text" id="dateTime">
+   <span id ="dateTimeErr" class="error">* </span>
+   <br><br>
+   Location: <input type="text" id="location">
+   <span id="locationErr" class="error">* </span>
+   <br><br>
+   Event Planner: <input type="text" id="eventPlanner" >
+   <span id="eventPlannerErr" class="error">* </span>
+   <br><br>
+   Client: <input type="text" id="client" >
+   <span id="clientErr" class="error">* </span>
+   <br><br>
+   Guest List: <input type="text" id="guestList" >
+   <span id="guestListErr" class="error">* </span>
+	<br><br>
+	Table Size: <input type="text" id="tableSize" >
+   <span id="tableSizeErr" class="error">* </span>
+   <br><br>
+	Empty Seats: <input type="text" id="emptySeatsPerTable" >
+   <span id="emptySeatsPerTableErr" class="error">* </span>
+   <br><br>
+	Min Fitness: <input type="text" id="minFitness" >
+   <span id="minFitnessErr" class="error">* </span>
+   <br><br>
+	Iterations: <input type="text" id="iterations" >
+   <span id="iterationsErr" class="error">* </span>
+   <br><br>
+	Status:<select id="status" multiple=multiple>
+	<option value="InProgress">In Progress</option>
+  	<option value="Completed">Completed</option>
+ 	<option value="Cancelled">Cancelled</option>
+   </select>
+   <br><br>
+   <input type="submit" name="submit" value="Save"> 
+</form>
+<form action="events.html" method ="get">
+<button type="submit" >Cancel</button>
+</form>
+</div>
+</div>
+</div>
+<script>
+$(document).ready(function() {
+
+	getCurrentUser();
+	$("#eventForm").submit(function (e){
+			
+		var name = $('#name').val();
+		var dateTime= $('#dateTime').val();
+		var location = $('#location').val();
+		var eventPlanner = $('#eventPlanner').val();
+		var client = $('#client').val();
+		var guestList = $('#guestList').val();
+		var tableSize = $('#tableSize').val();
+		var emptySeatsPerTable = $('#emptySeatsPerTable').val();
+		var minFitness = $('#minFitness').val();
+		var iterations = $('#iterations').val();
+		var selectedValues = $('#status').val();
+		var jsonData = 
+					'{'+  
+					'"name" :"'+ name +'",'+
+					'"dateTime" : "'+dateTime+'",'+
+					'"location" : "'+location+'",'+
+					'"eventPlanner" : "'+eventPlanner+'",'+
+					'"client" : "'+client+'",'+
+					'"guestList" : "'+guestList+'",'+
+					'"tableSize" : "'+tableSize+'",'+
+					'"emptySeatsPerTable" : "'+emptySeatsPerTable+'",'+
+					'"minFitness" : "'+minFitness+'",'+
+					'"iterations" : "'+iterations+'",'+
+					'"status" : [';
+					cm=",";
+				$.each(selectedValues, function(i,e){
+						if (i==selectedValues.length-1) cm='';
+					    jsonData += ' { "role":"'+ e+'"}'+cm;
+					});
+				jsonData +="]}";
+					
+			$.ajax( { 
+				url:"/EagleEventPlanning/services/events/",
+				type: "POST",
+				dataType: "json",
+				contentType: "application/json",
+				data: jsonData,  
+			statusCode: {
+				200: function(response) {
+					  $("#page-message").html("Record Added");
+					  window.location.assign("events.html");
+			  		},
+			  	401:function( response ) {
+		    			$('#page-messge').html("You must Login first");
+		    			},
+			  	405:function( response ) {
+		  	    		$('#page-messge').html("Access to the page forbiden");
+		  	    		},
+			  	406: function(response) {
+			  		var errors = response.responseJSON;
+			  		$(".error").html("*");
+			  		$.each(errors, function (i, message) {
+			  			$("#"+message.attributeName+"Err").html(message.message);
+			  			console.log("Error "+message.attributeName +" "+message.message)
+	    	        		});
+			  		$("#page-message").html("Fix errors and click Save");
+			  		},
+			  					  	
+				404: function(jqXHR, textStatus, errorThrown) {
+					$("#page-message").html("Error:"+textStatus);
+					console.log(errorThrown);
+		  	        console.log("error " + textStatus);
+		  	        console.log("incoming Text " + jqXHR.responseText);
+		  	      }
+				},
+				beforeSend: setHeader
+			});
+			e.preventDefault();
+	});
+	});
+</script>
+</body>
+</html>
