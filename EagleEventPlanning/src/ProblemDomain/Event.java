@@ -356,4 +356,25 @@ public class Event implements Serializable {
 			e.printStackTrace();
 		}
 	}
+
+	public ArrayList<Message> validate() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Boolean update(Event event) {
+		setClient(event.client);
+		setDateTime(event.dateTime);
+		setEmptySeatsPerTable(event.emptySeatsPerTable);
+		setEventPlanner(event.eventPlanner);
+		setId(event.eventId);
+		setIterations(event.iterations);
+		setLocation(event.location);
+		setMinFitness(event.minFitness);
+		setName(event.name);
+		setSeatingArrangement(event.seatingArrangement);
+		setStatus(event.status);
+		setTableSize(event.tableSize);
+		return true;
+	}
 }

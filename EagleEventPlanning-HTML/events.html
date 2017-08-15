@@ -19,7 +19,7 @@ function getCurrentUser() {
     			$('#userWelcome').html("Welcome, "+planner.name);
     	    },
     	    401:function( response ) {
-    			$('#userWelcome').html("You must login first.");
+    			$('#userWelcome').html("You must login first.");}
     	    },
     	    
     	    error: function(jqXHR, textStatus, errorThrown) {

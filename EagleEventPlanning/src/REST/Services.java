@@ -406,7 +406,144 @@ public class Services {
 			return messages;
 		}
 	}
+	
+	@Secured
+	@GET
+	@Path("/events")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Event> getEvent(@DefaultValue("0") @QueryParam("page") String page,
+			@DefaultValue("15") @QueryParam("per_page") String perPage) {
+		return EventSystem.findAllEvents(Integer.parseInt(page), Integer.parseInt(perPage));
+	}
 
+	@Secured
+	@GET
+	@Path("/events/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Event getEvent(@PathParam("id") String id) {
+		Event event = EventSystem.findEventById(id);
+		EM.getEM().refresh(event);
+		return event;
+	}
+
+	@Secured
+	@POST
+	@Path("/events")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public ArrayList<Message> addEvent(Event event, @Context final HttpServletResponse response) throws IOException {
+
+		if (event == null) {
+
+			response.setStatus(HttpServletResponse.SC_EXPECTATION_FAILED);
+			try {
+				response.flushBuffer();
+			} catch (Exception e) {
+			}
+			messages.add(new Message("op002", "Fail Operation", ""));
+			return messages;
+		} else {
+
+			ArrayList<Message> errMessages = event.validate();
+			if (errMessages != null) {
+
+				response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
+				try {
+					response.flushBuffer();
+				} catch (Exception e) {
+				}
+				return errMessages;
+			}
+			EntityTransaction clientTransaction = EM.getEM().getTransaction();
+			clientTransaction.begin();
+			Boolean result = EventSystem.addEvent(event);
+			clientTransaction.commit();
+			if (result) {
+				messages.add(new Message("op001", "Success Operation", ""));
+				return messages;
+			}
+			response.setStatus(HttpServletResponse.SC_EXPECTATION_FAILED);
+			try {
+				response.flushBuffer();
+			} catch (Exception e) {
+			}
+			messages.add(new Message("op002", "Fail Operation", ""));
+			return messages;
+		}
+	}
+
+	@Secured
+	@PUT
+	@Path("/events/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public ArrayList<Message> udpateEvent(Event event, @PathParam("id") String id,
+			@Context final HttpServletResponse response) throws IOException {
+		Event oldEvent = EventSystem.findEventById(id);
+		if (oldEvent == null) {
+			response.setStatus(HttpServletResponse.SC_EXPECTATION_FAILED);
+			try {
+				response.flushBuffer();
+			} catch (Exception e) {
+			}
+			messages.add(new Message("op002", "Fail Operation", ""));
+			return messages;
+		} else {
+			ArrayList<Message> errMessages = event.validate();
+			if (errMessages != null) {
+				response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
+				try {
+					response.flushBuffer();
+				} catch (Exception e) {
+				}
+				return errMessages;
+			}
+		}
+		EntityTransaction eventTransaction = EM.getEM().getTransaction();
+		eventTransaction.begin();
+		Boolean result = oldEvent.update(event);
+		eventTransaction.commit();
+		if (result) {
+			messages.add(new Message("op001", "Success Operation", ""));
+			return messages;
+		}
+		response.setStatus(HttpServletResponse.SC_EXPECTATION_FAILED);
+		try {
+			response.flushBuffer();
+		} catch (Exception e) {
+		}
+		messages.add(new Message("op002", "Fail Operation", ""));
+		return messages;
+	}
+
+	@Secured
+	@DELETE
+	@Path("/events/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public ArrayList<Message> deleteEvent(@PathParam("id") String id, @Context final HttpServletResponse response) {
+		Event event = EventSystem.findEventById(id);
+		if (event == null) {
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			try {
+				response.flushBuffer();
+			} catch (Exception e) {
+			}
+			messages.add(new Message("op002", "Fail Operation", ""));
+			return messages;
+		}
+		EntityTransaction eventTransaction = EM.getEM().getTransaction();
+		eventTransaction.begin();
+
+		Boolean result = EventSystem.removeEvent(event);
+		eventTransaction.commit();
+		if (result) {
+			messages.add(new Message("op001", "Success Operation", ""));
+			return messages;
+		} else {
+			messages.add(new Message("op002", "Fail Operation", ""));
+			return messages;
+		}
+	}
 	private void authenticate(String username, String password) throws Exception {
 		// Authenticate against a database, LDAP, file or whatever
 		// Throw an Exception if the credentials are invalid

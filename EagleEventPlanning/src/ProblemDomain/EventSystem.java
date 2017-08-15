@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 import DataAccessObjects.ClientDAO;
+import DataAccessObjects.EventDAO;
 import DataAccessObjects.EventPlannerDAO;
 import DataAccessObjects.TokenDAO;
 
@@ -76,6 +77,25 @@ public class EventSystem {
 	public static List<Client> findAllClients(int page, int pageSize) {
 		List<Client> list = ClientDAO.getAllClients(page, pageSize);
 		return list;
+	}
+
+	public static List<Event> findAllEvents(int page, int pageSize) {
+		List<Event> list = EventDAO.getAllEvents(page, pageSize);
+		return list;
+	}
+
+	public static Event findEventById(String id) {
+		return EventDAO.findEventById(Long.parseLong(id));
+	}
+
+	public static Boolean addEvent(Event event) {
+		EventDAO.saveEvent(event);
+		return true;
+	}
+
+	public static Boolean removeEvent(Event event) {
+		EventDAO.removeEvent(event);
+		return true;
 	}
 
 }
