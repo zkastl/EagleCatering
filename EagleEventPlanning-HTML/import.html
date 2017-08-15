@@ -25,8 +25,9 @@ function getCurrentUser() {
       	        console.log("error " + textStatus);
       	        console.log("incoming Text " + jqXHR.responseText);
 			},
-    	    beforeSend: setHeader()
+    	    beforeSend: setHeader
     	  });
+   	  }
   
 	function getCookie(cname) {
 	    var name = cname + "=";
@@ -48,10 +49,6 @@ function getCurrentUser() {
 		  token = getCookie("token");
 		  xhr.setRequestHeader('Authorization', 'Bearer '+token );		  
 	}
-	$(document).ready(function() {
-    		getCurrentUser();
-    })
-};
 </script>
 <h1>Eagle Event Planning</h1>
 <div style="color: white; background: gray; width: 100%; font-size: 12;">
@@ -89,8 +86,10 @@ function getCurrentUser() {
             </form>
         </div>
 	</body>
-	<script type="text/javascript">
+	<script>
         $(document).ready(function () {
+        getCurrentUser();
+        
             var getUrl = "/EagleEventPlanning/services/import";
             $('#gobox').click(function () {
                 $.ajax({
@@ -108,7 +107,8 @@ function getCurrentUser() {
                     },
                     success: function(data, textStatus, jqXHR) {
                         console.log(data);
-                    }
+                    },
+    	    		beforeSend: setHeader
                 });
             });
             $('#submitbox').click(function (e) {
@@ -129,9 +129,15 @@ function getCurrentUser() {
                         200: function(response) {
                             alert(response.statusText);
 	                    }
-                    }     
+                    },
+    	    		beforeSend: setHeader    
 	            });
             });
+            
+	function setHeader(xhr) {
+		  token = getCookie("token");
+		  xhr.setRequestHeader('Authorization', 'Bearer '+token );		  
+	};
         });
     </script>
 </html>
