@@ -101,8 +101,7 @@ public class Guest implements Serializable {
 	}
 
 	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.firstName + " " + this.lastName;
 	}
 
 }

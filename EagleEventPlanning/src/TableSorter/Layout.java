@@ -1,6 +1,7 @@
 package TableSorter;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -29,7 +30,7 @@ public class Layout implements Comparable<Layout> {
 		return guestList;
 	}
 
-	public static Layout createRandomTableLayout(ArrayList<Guest> guestList, int capacity, int numEmptySeats)
+	public static Layout createRandomTableLayout(Collection<Guest> guestList, int capacity, int numEmptySeats)
 			throws Exception {
 
 		if (guestList == null || guestList.size() == 0) {
@@ -41,15 +42,16 @@ public class Layout implements Comparable<Layout> {
 		ArrayList<Table> tableList = new ArrayList<Table>();
 		tableList.add(new Table(numberCurrentTables, capacity, numEmptySeats));
 
-		Collections.shuffle(guestList);
+		Collections.shuffle(tempGuests);
 
-		for (Guest g : guestList) {
-			if (!tableList.get(tableList.size() - 1).addGuest(g)) {
-
+		for (Guest g : tempGuests) {
+			if (!tableList.get(tableList.size() - 1).addGuest(g)) {				
 				numberCurrentTables++;
 				tableList.add(new Table(numberCurrentTables, capacity, numEmptySeats));
-				tableList.get(tableList.size() - 1).addGuest(g);
+				tableList.get(tableList.size() - 1).addGuest(g);			
 			}
+			g.assignedTable = tableList.get(tableList.size() - 1);
+			g.tableNumber = g.assignedTable.tableNumber;
 		}
 
 		Layout l = new Layout(tableList);

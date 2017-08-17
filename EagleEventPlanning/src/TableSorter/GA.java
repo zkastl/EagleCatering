@@ -1,6 +1,7 @@
 package TableSorter;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -116,7 +117,7 @@ public class GA {
 		return population.get(population.size() - 1);
 	}
 
-	public static void runGA(ArrayList<Guest> guests, int tableCapacity, int emptySeats) throws Exception {
+	public static Layout runGA(Collection<Guest> guests, int tableCapacity, int emptySeats) throws Exception {
 		
 		if(guests == null || guests.size() == 0) {
 			System.out.println("invalid parameters: empty guest list");
@@ -155,6 +156,7 @@ public class GA {
 		}
 		
 		population.get(0).printLayout();
+		return population.get(0);
 	}
 
 	private static void mutate(List<Layout> children, double mutationRate) {

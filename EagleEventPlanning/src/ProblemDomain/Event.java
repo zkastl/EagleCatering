@@ -26,6 +26,7 @@ import com.opencsv.CSVReader;
 
 import DataAccessObjects.EventDAO;
 import DataAccessObjects.GuestDAO;
+import TableSorter.Layout;
 
 @XmlRootElement(name = "event")
 @Entity(name = "event")
@@ -64,7 +65,7 @@ public class Event implements Serializable {
 	private Integer emptySeatsPerTable;
 
 	@Transient
-	private SeatingArrangement seatingArrangement;
+	private Layout seatingArrangement;
 
 	@Column(name = "minFitness", nullable = false)
 	private Integer minFitness;
@@ -166,7 +167,7 @@ public class Event implements Serializable {
 	public Boolean addGuest(Guest guest) {
 		guest.eventID = this.eventId;
 		this.guestList.put(guest.getName(), guest);
-		// GuestDAO.addGuest(guest);
+		GuestDAO.addGuest(guest);
 		return true;
 	}
 
@@ -200,12 +201,12 @@ public class Event implements Serializable {
 		this.emptySeatsPerTable = emptySeatsPerTable;
 	}
 
-	public SeatingArrangement getSeatingArrangement() {
+	public Layout getSeatingArrangement() {
 		return seatingArrangement;
 	}
 
 	@XmlElement
-	public void setSeatingArrangement(SeatingArrangement seatingArrangement) {
+	public void setSeatingArrangement(Layout seatingArrangement) {
 
 		this.seatingArrangement = seatingArrangement;
 	}
@@ -248,16 +249,21 @@ public class Event implements Serializable {
 	}
 
 	public Integer getNumberTables() {
-		return seatingArrangement.getTables().size();
+		return (seatingArrangement == null) ? seatingArrangement.tableList.size() : 0;
 	}
 
-	public void calculateSeatingArrangement() {
-		// TODO
-		// insert genetic algorithm here
+	public void calculateSeatingArrangement() throws Exception {
+		if(this.tableSize == null)
+			this.tableSize = 8;
+		if(this.emptySeatsPerTable == null)
+			this.emptySeatsPerTable = 2;
+		
+		this.seatingArrangement = TableSorter.GA.runGA(guestList.values(), this.tableSize, this.emptySeatsPerTable);
 	}
 
 	public void printGuestList(String sortingMethod) {
-		// TODO
+		// TODO: Print this method as JSON
+		this.seatingArrangement.printLayout();
 	}
 
 	public void printPlaceCards() {
@@ -292,7 +298,7 @@ public class Event implements Serializable {
 						String value = rowHeader.get(i);
 						switch (value) {
 						case "Guest #":
-							//guestNumber = Integer.parseInt(data);
+							break;
 						case "First Name":
 							firstName = data;
 							break;
@@ -329,10 +335,7 @@ public class Event implements Serializable {
 							Guest currentGuest = new Guest(guestNumber, firstName, lastName,
 									new ArrayList<Integer>(sameTable), new ArrayList<Integer>(notSameTable),
 									tableNumber);
-							//addGuest(currentGuest);
-
-							// DEBUG
-							tempGuests.add(currentGuest);
+							addGuest(currentGuest);
 
 							i = 0;
 							guestNumber++;
@@ -350,7 +353,7 @@ public class Event implements Serializable {
 					firstLine = false;
 				}
 			}
-			TableSorter.GA.runGA(tempGuests, 8, 2);
+			calculateSeatingArrangement();
 			java.lang.System.out.println("Data Successfully Uploaded");
 		} catch (Exception e) {
 			e.printStackTrace();
