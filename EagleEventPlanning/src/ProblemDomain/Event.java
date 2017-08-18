@@ -261,9 +261,8 @@ public class Event implements Serializable {
 		this.seatingArrangement = TableSorter.GA.runGA(guestList.values(), this.tableSize, this.emptySeatsPerTable);
 	}
 
-	public void printGuestList(String sortingMethod) {
-		// TODO: Print this method as JSON
-		this.seatingArrangement.printLayout();
+	public String printGuestList() {
+		return this.seatingArrangement.printLayout();
 	}
 
 	public void printPlaceCards() {
@@ -271,11 +270,6 @@ public class Event implements Serializable {
 	}
 
 	public void importGuests(String csvFile) {
-		// This is a temporary collection of guests to be used to test the
-		// algorithm.
-		// For some reason, the hashmap won't add a new guest to itself.
-		ArrayList<Guest> tempGuests = new ArrayList<Guest>();
-
 		try (CSVReader reader = new CSVReader(new FileReader(csvFile), ',');) {
 			String[] rowData = null;
 			ArrayList<String> rowHeader = new ArrayList<String>();
@@ -287,7 +281,6 @@ public class Event implements Serializable {
 			ArrayList<Integer> sameTable = new ArrayList<Integer>();
 			ArrayList<Integer> notSameTable = new ArrayList<Integer>();
 			int tableNumber = -1;
-			String comments = "";
 
 			while ((rowData = reader.readNext()) != null) {
 				for (String data : rowData) {
@@ -316,9 +309,6 @@ public class Event implements Serializable {
 						case "Table Number":
 							tableNumber = Integer.parseInt(data);
 							break;
-						case "Comments":
-							comments = data;
-							break;
 						default:
 							break;
 						}
@@ -344,7 +334,6 @@ public class Event implements Serializable {
 							sameTable.clear();
 							notSameTable.clear();
 							tableNumber = -1;
-							comments = "";
 						}
 					}
 				}

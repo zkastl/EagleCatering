@@ -59,15 +59,19 @@ public class Layout implements Comparable<Layout> {
 		return l;
 	}	
 
-	public void printLayout() {
-		System.out.println("***Table Layout***");
-		System.out.println("  Fitness Value: " + String.valueOf(this.fitnessScore));
+	public String printLayout() {
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append("***Table Layout***\n");
+		sb.append("  Fitness Value: " + String.valueOf(this.fitnessScore + "\n"));
 
 		for (Table t : this.tableList) {
-			System.out.println("    Table " + String.valueOf(t.tableNumber) + ":");
+			sb.append("    Table " + String.valueOf(t.tableNumber) + ":\n");
 			for (Guest g : t.seatedGuests)
-				System.out.println("      " + g.firstName + " " + g.lastName);
+				sb.append("      " + g.firstName + " " + g.lastName + "\n");
 		}
+		
+		return sb.toString();
 	}
 
 	@Override

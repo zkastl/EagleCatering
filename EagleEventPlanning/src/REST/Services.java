@@ -30,6 +30,7 @@ import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import DataAccessObjects.EM;
+import DataAccessObjects.EventDAO;
 import ProblemDomain.Client;
 import ProblemDomain.Event;
 import ProblemDomain.EventPlanner;
@@ -67,25 +68,30 @@ public class Services {
 	public Response importGuests(@PathParam("id") String id, @FormDataParam("file") InputStream uploadInputStream,
 			@FormDataParam("file") FormDataContentDisposition fileDetail) {
 
+
+		Event e = new Event();
 		// Save the file to the server
 		try {
 			File tempFile = File.createTempFile("upload" + "001", ".tmp");
 			String lastUploadedFile = tempFile.getAbsolutePath();
-			OutputStream out = new FileOutputStream(tempFile);
-
-			int read = 0;
-			byte[] bytes = new byte[1024];
-			while ((read = uploadInputStream.read(bytes)) != -1) {
-				out.write(bytes, 0, read);
+			try (OutputStream out = new FileOutputStream(tempFile))
+			{
+				// Read the data from the server file
+				int read = 0;
+				byte[] bytes = new byte[1024];
+				while ((read = uploadInputStream.read(bytes)) != -1) {
+					out.write(bytes, 0, read);
+				}
+				
+				// Create a new event and import the guests.
+				e.importGuests(lastUploadedFile);
+				EventDAO.saveEvent(e);
 			}
-
-			Event e = new Event();
-			e.importGuests(lastUploadedFile);
-			out.close();
-		} catch (IOException ioex) {
+		} 
+		catch (IOException ioex) {
 			ioex.printStackTrace();
 		}
-		return Response.status(200).entity("File uploaded succsssfully!").build();
+		return Response.status(200).entity(e.printGuestList()).build();
 	}
 
 	@POST

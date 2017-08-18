@@ -155,7 +155,6 @@ public class GA {
 			generation++;			
 		}
 		
-		population.get(0).printLayout();
 		return population.get(0);
 	}
 
