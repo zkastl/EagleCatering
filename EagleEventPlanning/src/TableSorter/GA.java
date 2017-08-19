@@ -53,43 +53,24 @@ public class GA {
 	}
 
 	private static Layout crossover(Layout mother, Layout father) {
+		// Use permutation encoding to find the sequence of guests
 		
-		// Get the count of the layouts		
-		// really hope this pass-by-value
-		Random rand = new Random();
-		Layout child = new Layout(mother.tableList);
-		int numberChromosomesToSelect = Math.floorDiv(child.getGuests().size(), 2);
+		// Select a single point for crossover and split the lists
+		int crossoverPoint = random.nextInt(mother.getGuests().size());
+		List<Guest> mothersPart = mother.getGuests().subList(0, crossoverPoint);
+		List<Guest> fathersPart = father.getGuests().subList(crossoverPoint, father.getGuests().size());
 		
-		for(int i = 0; i < numberChromosomesToSelect; i++)
-		{
-			// select a random number
-			int selected = rand.nextInt(numberChromosomesToSelect);
-			Guest selectedGuest = new Guest();
-			Guest fathersGuest = new Guest();
-			Guest swappedGuest = new Guest();
-			
-			for (Guest g : child.getGuests())
-				if(g.guestNumber == selected)
-					selectedGuest = g;
-			
-			for (Guest g : father.getGuests())
-				if(g.guestNumber == selected)
-					fathersGuest = g;
-			
-			for (Guest g : child.getGuests())
-				if(g.tableNumber == fathersGuest.tableNumber)
-					swappedGuest = g;
-					
-			Guest backupGuest = selectedGuest;
-			selectedGuest = swappedGuest;
-			swappedGuest = backupGuest;
-			
-			int backupNumber = selectedGuest.tableNumber;
-			selectedGuest.tableNumber = swappedGuest.tableNumber;
-			swappedGuest.tableNumber = backupNumber;					
+		// Create a new layout, add the mothers guests to the layout.
+		Layout child = new Layout(mother.tableSize, mother.emptySeats);
+		for(Guest g : mothersPart) {
+			child.addGuest(g);
 		}
 		
-		child.evaluateFitness();
+		for(Guest g: father.getGuests()) {
+			if(!child.getGuests().contains(g))
+				child.addGuest(g);
+		}
+		
 		return child;
 	}
 

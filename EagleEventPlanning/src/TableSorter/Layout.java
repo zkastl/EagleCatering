@@ -12,10 +12,70 @@ public class Layout implements Comparable<Layout> {
 
 	public List<Table> tableList;
 	public Integer fitnessScore = 0;
+	public int tableSize;
+	public int emptySeats;
+	
+	public Layout(int tableSize, int emptySeats) {
+		this.tableList = new ArrayList<Table>();
+		this.tableSize = tableSize;
+		this.emptySeats = emptySeats;
+	}
 
 	public Layout(List<Table> tableList) {
 		this.tableList = tableList;
 		fitnessScore = evaluateFitness();
+		this.tableSize = tableList.get(0).capacity;
+		this.emptySeats = tableList.get(0).numberOfEmptySeats;
+	}
+	
+	public Layout(List<Guest> guestList, int tableCapacity, int emptySeats){
+		this.tableList = new ArrayList<Table>();
+		List<Integer> tableNumbers = new ArrayList<Integer>();
+		for(Guest g : guestList) {
+			if (g.tableNumber <= 0)
+				try {
+					throw new Exception("guest " + g.getName() + " has a invalid table number");
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			if(!tableNumbers.contains(g.tableNumber))
+				this.tableList.add(new Table(g.tableNumber, tableCapacity, emptySeats));
+			else
+				tableList.stream().filter(x -> x.tableNumber == g.guestNumber).findFirst().get().addGuest(g);			
+		}
+		this.fitnessScore = evaluateFitness();
+		this.tableSize = tableCapacity;
+		this.emptySeats = emptySeats;
+	}
+	
+	public void addGuest(Guest g) {
+		// Sort the tables by table number
+		Collections.sort(this.tableList);
+		
+		// Get the table the guest should be assigned to or null if either the table doesn't exist 
+		Table guestTable = this.tableList.stream().filter(x -> (x.tableNumber == g.tableNumber) && !x.isFull()).findFirst().orElse(null);
+		
+		// If the guest table is not null, then a valid table was found to match the guest,
+		// Add the guest, unless the table is full; if it's full, add it to the first available table
+		if (guestTable != null)
+			guestTable.addGuest(g);
+		else
+			addGuestToFirstAvailableTable(g);
+		
+		
+	}
+	
+	private void addGuestToFirstAvailableTable(Guest g) {
+		// Sort tables by number
+		Collections.sort(this.tableList);
+		for(Table t : this.tableList) {
+			if(t.addGuest(g)) {
+				g.assignedTable = t;
+				g.tableNumber = t.tableNumber;
+				return;
+			}
+		}
 	}
 
 	public List<Guest> getGuests() {

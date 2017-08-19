@@ -15,7 +15,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "table")
 @Entity(name = "\"table\"")
-public class Table implements Serializable {
+public class Table implements Serializable, Comparable<Table> {
 
 	private static final long serialVersionUID = 1L;
 	@Id // signifies the primary key
@@ -73,5 +73,20 @@ public class Table implements Serializable {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public int compareTo(Table o) {
+		if (this.tableNumber < o.tableNumber)
+			return -1;
+		else if(this.tableNumber == o.tableNumber)
+			return 0;
+		else
+			return 1;
+		
+	}
+	
+	public boolean isFull() {
+		return this.seatedGuests.size() >= (this.capacity - this.numberOfEmptySeats);
 	}
 }
