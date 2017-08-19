@@ -77,7 +77,7 @@ function getCurrentUser() {
    Name: <input type="text" id="name">
    <span id="nameErr" class="error">* </span>
    <br><br>
-   DateTime: <input type="text" id="dateTime">
+   DateTime: <input type="datetime-local" id="dateTime">
    <span id ="dateTimeErr" class="error">* </span>
    <br><br>
    Location: <input type="text" id="location">
@@ -89,20 +89,11 @@ function getCurrentUser() {
    Client: <input type="text" id="client" >
    <span id="clientErr" class="error">* </span>
    <br><br>
-   Guest List: <input type="text" id="guestList" >
-   <span id="guestListErr" class="error">* </span>
-	<br><br>
 	Table Size: <input type="text" id="tableSize" >
    <span id="tableSizeErr" class="error">* </span>
    <br><br>
 	Empty Seats: <input type="text" id="emptySeatsPerTable" >
    <span id="emptySeatsPerTableErr" class="error">* </span>
-   <br><br>
-	Min Fitness: <input type="text" id="minFitness" >
-   <span id="minFitnessErr" class="error">* </span>
-   <br><br>
-	Iterations: <input type="text" id="iterations" >
-   <span id="iterationsErr" class="error">* </span>
    <br><br>
 	Status:<select id="status" multiple=multiple>
 	<option value="InProgress">In Progress</option>
@@ -129,11 +120,8 @@ $(document).ready(function() {
 		var location = $('#location').val();
 		var eventPlanner = $('#eventPlanner').val();
 		var client = $('#client').val();
-		var guestList = $('#guestList').val();
 		var tableSize = $('#tableSize').val();
 		var emptySeatsPerTable = $('#emptySeatsPerTable').val();
-		var minFitness = $('#minFitness').val();
-		var iterations = $('#iterations').val();
 		var selectedValues = $('#status').val();
 		var jsonData = 
 					'{'+  
@@ -142,16 +130,13 @@ $(document).ready(function() {
 					'"location" : "'+location+'",'+
 					'"eventPlanner" : "'+eventPlanner+'",'+
 					'"client" : "'+client+'",'+
-					'"guestList" : "'+guestList+'",'+
 					'"tableSize" : "'+tableSize+'",'+
 					'"emptySeatsPerTable" : "'+emptySeatsPerTable+'",'+
-					'"minFitness" : "'+minFitness+'",'+
-					'"iterations" : "'+iterations+'",'+
 					'"status" : [';
 					cm=",";
 				$.each(selectedValues, function(i,e){
 						if (i==selectedValues.length-1) cm='';
-					    jsonData += ' { "role":"'+ e+'"}'+cm;
+					    jsonData += ' { "status":"'+ e+'"}'+cm;
 					});
 				jsonData +="]}";
 					
