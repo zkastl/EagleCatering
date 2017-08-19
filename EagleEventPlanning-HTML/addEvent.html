@@ -89,14 +89,14 @@ function getCurrentUser() {
    Client: <input type="text" id="client" >
    <span id="clientErr" class="error">* </span>
    <br><br>
-	Table Size: <input type="text" id="tableSize" >
+	Table Size: <input type="number" id="tableSize" min="0" >
    <span id="tableSizeErr" class="error">* </span>
    <br><br>
-	Empty Seats: <input type="text" id="emptySeatsPerTable" >
+	Empty Seats: <input type="number" id="emptySeatsPerTable" min="0" >
    <span id="emptySeatsPerTableErr" class="error">* </span>
    <br><br>
-	Status:<select id="status" multiple=multiple>
-	<option value="InProgress">In Progress</option>
+	Status:<select id="status" size="1" >
+	<option value="InProgress" selected>In Progress</option>
   	<option value="Completed">Completed</option>
  	<option value="Cancelled">Cancelled</option>
    </select>
@@ -110,6 +110,15 @@ function getCurrentUser() {
 </div>
 </div>
 <script>
+(function(){
+	$("#emptySeatsPerTable").on("change", function(e){
+	    var ts = $("#tableSize").val()
+	  if($(this).val() > ts){
+	    $(this).val(ts);
+	    alert("Empty Seats cannot excede the value of Table Size")
+	  }
+	})
+	}())
 $(document).ready(function() {
 
 	getCurrentUser();
@@ -122,7 +131,7 @@ $(document).ready(function() {
 		var client = $('#client').val();
 		var tableSize = $('#tableSize').val();
 		var emptySeatsPerTable = $('#emptySeatsPerTable').val();
-		var selectedValues = $('#status').val();
+		var selectedValue = $('#status').val();
 		var jsonData = 
 					'{'+  
 					'"name" :"'+ name +'",'+
@@ -132,13 +141,7 @@ $(document).ready(function() {
 					'"client" : "'+client+'",'+
 					'"tableSize" : "'+tableSize+'",'+
 					'"emptySeatsPerTable" : "'+emptySeatsPerTable+'",'+
-					'"status" : [';
-					cm=",";
-				$.each(selectedValues, function(i,e){
-						if (i==selectedValues.length-1) cm='';
-					    jsonData += ' { "status":"'+ e+'"}'+cm;
-					});
-				jsonData +="]}";
+					'"status" : "'+selectedValue+'"}';
 					
 			$.ajax( { 
 				url:"/EagleEventPlanning/services/events/",
