@@ -67,12 +67,6 @@ public class Event implements Serializable {
 	@Transient
 	private Layout seatingArrangement;
 
-	@Column(name = "minFitness", nullable = false)
-	private Integer minFitness;
-
-	@Column(name = "iterations", nullable = false)
-	private Integer iterations;
-
 	@Column(name = "status", nullable = false, length = 20)
 	private String status;
 
@@ -86,8 +80,7 @@ public class Event implements Serializable {
 	}
 
 	public Event(String name, LocalDateTime dateTime, String location, EventPlanner eventPlanner, Client client,
-			Hashtable<String, Guest> guestList, Integer tableSize, Integer emptySeatsPerTable, Integer minFitness,
-			Integer iterations, String status) {
+			Hashtable<String, Guest> guestList, Integer tableSize, Integer emptySeatsPerTable, String status) {
 		this();
 		this.name = name;
 		this.dateTime = dateTime;
@@ -97,8 +90,6 @@ public class Event implements Serializable {
 		this.guestList = guestList;
 		this.tableSize = tableSize;
 		this.emptySeatsPerTable = emptySeatsPerTable;
-		this.minFitness = minFitness;
-		this.iterations = iterations;
 		this.status = status;
 	}
 
@@ -209,26 +200,6 @@ public class Event implements Serializable {
 	public void setSeatingArrangement(Layout seatingArrangement) {
 
 		this.seatingArrangement = seatingArrangement;
-	}
-
-	public Integer getMinFitness() {
-		return minFitness;
-	}
-
-	@XmlElement
-	public void setMinFitness(Integer minFitness) {
-
-		this.minFitness = minFitness;
-	}
-
-	public Integer getIterations() {
-		return iterations;
-	}
-
-	@XmlElement
-	public void setIterations(Integer iterations) {
-
-		this.iterations = iterations;
 	}
 
 	public String getStatus() {
@@ -360,9 +331,7 @@ public class Event implements Serializable {
 		setEmptySeatsPerTable(event.emptySeatsPerTable);
 		setEventPlanner(event.eventPlanner);
 		setId(event.eventId);
-		setIterations(event.iterations);
 		setLocation(event.location);
-		setMinFitness(event.minFitness);
 		setName(event.name);
 		setSeatingArrangement(event.seatingArrangement);
 		setStatus(event.status);
