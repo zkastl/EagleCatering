@@ -69,12 +69,25 @@ public class Layout implements Comparable<Layout> {
 	private void addGuestToFirstAvailableTable(Guest g) {
 		// Sort tables by number
 		Collections.sort(this.tableList);
-		for(Table t : this.tableList) {
-			if(t.addGuest(g)) {
-				g.assignedTable = t;
-				g.tableNumber = t.tableNumber;
-				return;
+		
+		if(this.tableList.size() == 0)
+			this.tableList.add(new Table(1, this.tableSize, this.emptySeats));
+		
+		try {
+			for(Table t : this.tableList) {
+				if(t.addGuest(g)) {
+					g.assignedTable = t;
+					g.tableNumber = t.tableNumber;
+					return;
+				}
+				else {
+					this.tableList.add(new Table(this.tableList.size() - 1, this.tableSize, this.emptySeats));
+					continue;
+				}
 			}
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
 		}
 	}
 
@@ -123,12 +136,18 @@ public class Layout implements Comparable<Layout> {
 		
 		StringBuilder sb = new StringBuilder();
 		sb.append("***Table Layout***\n");
+		System.out.print("***Table Layout***\n");
+		
 		sb.append("  Fitness Value: " + String.valueOf(this.fitnessScore + "\n"));
+		System.out.print("  Fitness Value: " + String.valueOf(this.fitnessScore + "\n"));
 
 		for (Table t : this.tableList) {
 			sb.append("    Table " + String.valueOf(t.tableNumber) + ":\n");
-			for (Guest g : t.seatedGuests)
+			System.out.print("    Table " + String.valueOf(t.tableNumber) + ":\n");
+			for (Guest g : t.seatedGuests) {
 				sb.append("      " + g.firstName + " " + g.lastName + "\n");
+				System.out.print("      " + g.firstName + " " + g.lastName + "\n");
+			}
 		}
 		
 		return sb.toString();

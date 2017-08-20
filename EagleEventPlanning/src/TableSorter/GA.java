@@ -11,11 +11,11 @@ import ProblemDomain.Guest;
 
 public class GA {
 
-	private static int POPULATION_SIZE = 40;
+	private static int POPULATION_SIZE = 100;
 	private static double MUTATION_RATE = 0.1;
 	private static double DEATH_RATE = 0.15;
-	private static int FITNESS_THRESHOLD = 1000;
-	private static int MAX_GENERATIONS = 2000;
+	private static int FITNESS_THRESHOLD = 10000;
+	private static int MAX_GENERATIONS = 1000;
 	private static Random random = new Random();
 	private static Comparator<Layout> descendCompare = new Comparator<Layout>() {
 				
@@ -58,7 +58,6 @@ public class GA {
 		// Select a single point for crossover and split the lists
 		int crossoverPoint = random.nextInt(mother.getGuests().size());
 		List<Guest> mothersPart = mother.getGuests().subList(0, crossoverPoint);
-		List<Guest> fathersPart = father.getGuests().subList(crossoverPoint, father.getGuests().size());
 		
 		// Create a new layout, add the mothers guests to the layout.
 		Layout child = new Layout(mother.tableSize, mother.emptySeats);
@@ -71,6 +70,7 @@ public class GA {
 				child.addGuest(g);
 		}
 		
+		child.evaluateFitness();
 		return child;
 	}
 
@@ -111,7 +111,6 @@ public class GA {
 
 		for(int genome = 0; genome < POPULATION_SIZE; genome++) {			
 			Layout layout = Layout.createRandomTableLayout(guests, tableCapacity, emptySeats);
-			layout.evaluateFitness();
 			population.add(layout);
 		}
 		
@@ -131,8 +130,11 @@ public class GA {
 			// Sort the new population by descending fitness scores
 			population.sort(descendCompare);
 			
-			if (generation % 10 == 0)
+			if (generation % 1 == 0) {
 				System.out.println("Generation "+ generation + " - Max Fitness: " + population.get(0).fitnessScore );
+				population.get(0).printLayout();
+			}
+			
 			generation++;			
 		}
 		
