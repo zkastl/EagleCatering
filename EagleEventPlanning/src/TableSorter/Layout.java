@@ -49,46 +49,40 @@ public class Layout implements Comparable<Layout> {
 		this.emptySeats = emptySeats;
 	}
 	
-	public void addGuest(Guest g) {
+	public boolean addGuest(Guest g) {
 		// Sort the tables by table number
 		Collections.sort(this.tableList);
 		
-		// Get the table the guest should be assigned to or null if either the table doesn't exist 
-		Table guestTable = this.tableList.stream().filter(x -> (x.tableNumber == g.tableNumber) && !x.isFull()).findFirst().orElse(null);
-		
-		// If the guest table is not null, then a valid table was found to match the guest,
-		// Add the guest, unless the table is full; if it's full, add it to the first available table
-		if (guestTable != null)
-			guestTable.addGuest(g);
-		else
-			addGuestToFirstAvailableTable(g);
-		
-		
+		// A guest can either be added to a random table, the first available table, or (if assigned) their table
+		if(!this.addGuestToSpecificTable(g))
+			return this.addGuestToFirstAvailableTable(g);
+		return true;		
 	}
 	
-	private void addGuestToFirstAvailableTable(Guest g) {
+	public boolean addGuestToFirstAvailableTable(Guest g) {
 		// Sort tables by number
 		Collections.sort(this.tableList);
 		
 		if(this.tableList.size() == 0)
 			this.tableList.add(new Table(1, this.tableSize, this.emptySeats));
 		
-		try {
-			for(Table t : this.tableList) {
-				if(t.addGuest(g)) {
-					g.assignedTable = t;
-					g.tableNumber = t.tableNumber;
-					return;
-				}
-				else {
-					this.tableList.add(new Table(this.tableList.size() - 1, this.tableSize, this.emptySeats));
-					continue;
-				}
-			}
+		for(Table t : this.tableList) {
+			if(t.addGuest(g)) {
+				return true;
+			}			
 		}
-		catch (Exception ex) {
-			ex.printStackTrace();
-		}
+		
+		return false;
+	}
+	
+	public boolean addGuestToSpecificTable(Guest g) {
+		// Sort tables by number
+		Collections.sort(this.tableList);
+		
+		if(!this.containsTableNumber(g.tableNumber))
+			this.tableList.add(new Table(g.tableNumber, this.tableSize, this.emptySeats));
+		
+		return this.tableList.stream().filter(x -> x.tableNumber == g.tableNumber).findFirst().get().addGuest(g);
 	}
 
 	public List<Guest> getGuests() {
@@ -158,6 +152,12 @@ public class Layout implements Comparable<Layout> {
 		return this.fitnessScore.compareTo(o.fitnessScore);
 	}
 	
+	// Returns a boolean containing whether or not the layout contains a table with the passed in number
+	public boolean containsTableNumber(int tableNumber) {
+		boolean containsTN = !(this.tableList == null || this.tableList.size() == 0) ? this.tableList.stream().anyMatch(x -> x.tableNumber == tableNumber) : false;
+		return containsTN;
+	}
+	
 	public int evaluateFitness() {
 		if(tableList.size() == 0)
 			return 0;
@@ -172,42 +172,18 @@ public class Layout implements Comparable<Layout> {
 		
 		for(Table table : tableList) {
 			int t = 0;
-			for(Guest guest : table.seatedGuests) {
-				t += (goodGuestAtTable(guest.sameTable, table) + badGuestAtTable(guest.sameTable, table));
+			for(Guest guest : table.seatedGuests){
+				t += 10000 * table.seatedGuests.stream().filter(x -> guest.sameTable.contains(x.guestNumber)).count();
+				//t -= 10 * table.seatedGuests.stream().filter(x -> guest.notSameTable.contains(x.guestNumber)).count();
 			}
-			
 			tableScores[index] = t;
 			index++;
 		}
 		
 		for(int i : tableScores)
 			fitnessScore += i;
-		fitnessScore = Math.floorDiv(fitnessScore, tableScores.length); 
+		fitnessScore = Math.floorDiv(fitnessScore, tableScores.length);
 		
 		return fitnessScore;
-	}
-	
-	private int goodGuestAtTable(List<Integer> potentialNeighbors, Table table) {
-		int guests = 0;
-		for(int i : potentialNeighbors) {
-			for(Guest g : table.seatedGuests) {
-				if(g.guestNumber == i)
-					guests += 1000;
-			}
-		}
-		
-		return guests;
-	}
-	
-	private int badGuestAtTable(List<Integer> potentialNeighbors, Table table) {
-		int guests = 0;
-		for(int i : potentialNeighbors) {
-			for(Guest g : table.seatedGuests) {
-				if(g.guestNumber == i)
-					guests += 1;
-			}
-		}
-		
-		return guests;
 	}
 }

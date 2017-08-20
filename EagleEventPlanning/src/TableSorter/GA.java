@@ -14,8 +14,8 @@ public class GA {
 	private static int POPULATION_SIZE = 100;
 	private static double MUTATION_RATE = 0.1;
 	private static double DEATH_RATE = 0.15;
-	private static int FITNESS_THRESHOLD = 10000;
-	private static int MAX_GENERATIONS = 1000;
+	//private static int FITNESS_THRESHOLD = 10000;
+	private static int MAX_GENERATIONS = 10000;
 	private static Random random = new Random();
 	private static Comparator<Layout> descendCompare = new Comparator<Layout>() {
 				
@@ -107,7 +107,7 @@ public class GA {
 				
 		ArrayList<Layout> population = new ArrayList<Layout>();
 		int generation = 1;
-		int maxFit = 0;
+		//int maxFit = 0;
 
 		for(int genome = 0; genome < POPULATION_SIZE; genome++) {			
 			Layout layout = Layout.createRandomTableLayout(guests, tableCapacity, emptySeats);
@@ -130,14 +130,14 @@ public class GA {
 			// Sort the new population by descending fitness scores
 			population.sort(descendCompare);
 			
-			if (generation % 1 == 0) {
+			if (generation % 100 == 0) {
 				System.out.println("Generation "+ generation + " - Max Fitness: " + population.get(0).fitnessScore );
-				population.get(0).printLayout();
 			}
 			
 			generation++;			
 		}
 		
+		population.get(0).printLayout();
 		return population.get(0);
 	}
 
