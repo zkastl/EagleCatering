@@ -270,12 +270,12 @@ public class Event implements Serializable {
 							lastName = data;
 							break;
 						case "Same Table":
-							if (!data.equals(""))
-								sameTable.add(Integer.parseInt(data));
+							try { sameTable.add(Integer.parseInt(data)); }
+							catch (NumberFormatException nfex) { /* bad value, ignore it  */ }								
 							break;
 						case "Not Same Table":
-							if (!data.equals(""))
-								notSameTable.add(Integer.parseInt(data));
+							try { notSameTable.add(Integer.parseInt(data)); }
+							catch (NumberFormatException nfex) { /* bad value, ignore it  */ }	
 							break;
 						case "Table Number":
 							tableNumber = Integer.parseInt(data);
