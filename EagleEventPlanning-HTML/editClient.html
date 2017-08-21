@@ -6,49 +6,6 @@
 
 </head>
 <body>
-<script>
-function getCurrentUser() {
-    	$.ajax({
-    	    url: "/EagleEventPlanning/services/employees/current",
-    	    type: 'GET',
-    	    datatype: 'json',
-    	    statusCode: {
-    	    200: function( planner ) {
-    	
-    			$('#userWelcome').html("Welcome, "+planner.name);
-    	    },
-    	    401:function( response ) {
-    	    		$('#deleteMessage').html("You must Login first");}
-    	    },
-    	    
-    	    error: function(jqXHR, textStatus, errorThrown) {
-      	        console.log("error " + textStatus);
-      	        console.log("incoming Text " + jqXHR.responseText);},
-    	    beforeSend: setHeader       
-    	  });   	
-    }
-  
-	function getCookie(cname) {
-	    var name = cname + "=";
-	    var decodedCookie = decodeURIComponent(document.cookie);
-	    var ca = decodedCookie.split(';');
-	    for(var i = 0; i <ca.length; i++) {
-	        var c = ca[i];
-	        while (c.charAt(0) == ' ') {
-	            c = c.substring(1);
-	        }
-	        if (c.indexOf(name) == 0) {
-	            return c.substring(name.length, c.length);
-	        }
-	    }
-	    return "";
-	}
-	
-	function setHeader(xhr) {
-		  token = getCookie("token");
-		  xhr.setRequestHeader('Authorization', 'Bearer '+token );		  
-	}
-</script>
 
 <h1>Eagle Event Planning</h1>
 <div style="color: white; background: gray; width: 100%; font-size: 12;">
@@ -91,7 +48,48 @@ function getCurrentUser() {
 </div>
 </div>
 </div>
-<script>
+<script>function getCurrentUser() {
+    	$.ajax({
+    	    url: "/EagleEventPlanning/services/employees/current",
+    	    type: 'GET',
+    	    datatype: 'json',
+    	    statusCode: {
+    	    200: function( planner ) {
+    	
+    			$('#userWelcome').html("Welcome, "+planner.name);
+    	    },
+    	    401:function( response ) {
+    	    		$('#deleteMessage').html("You must Login first");}
+    	    },
+    	    
+    	    error: function(jqXHR, textStatus, errorThrown) {
+      	        console.log("error " + textStatus);
+      	        console.log("incoming Text " + jqXHR.responseText);},
+    	    beforeSend: setHeader       
+    	  });   	
+    }
+  
+	function getCookie(cname) {
+	    var name = cname + "=";
+	    var decodedCookie = decodeURIComponent(document.cookie);
+	    var ca = decodedCookie.split(';');
+	    for(var i = 0; i <ca.length; i++) {
+	        var c = ca[i];
+	        while (c.charAt(0) == ' ') {
+	            c = c.substring(1);
+	        }
+	        if (c.indexOf(name) == 0) {
+	            return c.substring(name.length, c.length);
+	        }
+	    }
+	    return "";
+	}
+	
+	function setHeader(xhr) {
+		  token = getCookie("token");
+		  xhr.setRequestHeader('Authorization', 'Bearer '+token );		  
+	}
+	
 $.urlParam = function(name){
     var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
     if (results==null){

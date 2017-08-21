@@ -98,4 +98,24 @@ public class EventSystem {
 		return true;
 	}
 
+	public static List<Guest> findGuestsByEventId(String eventId, int parseInt, int parseInt2) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public static Boolean addGuest(Guest guest) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public static Guest findGuestById(String id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public static Boolean removeGuest(Guest guest) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

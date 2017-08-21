@@ -1,6 +1,7 @@
 package ProblemDomain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -102,6 +103,16 @@ public class Guest implements Serializable {
 
 	public String getName() {
 		return this.firstName + " " + this.lastName;
+	}
+
+	public ArrayList<Message> validate() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Boolean update(Guest guest) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

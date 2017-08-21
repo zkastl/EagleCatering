@@ -35,6 +35,7 @@ import ProblemDomain.Client;
 import ProblemDomain.Event;
 import ProblemDomain.EventPlanner;
 import ProblemDomain.EventSystem;
+import ProblemDomain.Guest;
 import ProblemDomain.Message;
 import ProblemDomain.Role;
 import ProblemDomain.RoleAssignment;
@@ -68,27 +69,24 @@ public class Services {
 	public Response importGuests(@PathParam("id") String id, @FormDataParam("file") InputStream uploadInputStream,
 			@FormDataParam("file") FormDataContentDisposition fileDetail) {
 
-
 		Event e = new Event();
 		// Save the file to the server
 		try {
 			File tempFile = File.createTempFile("upload" + "001", ".tmp");
 			String lastUploadedFile = tempFile.getAbsolutePath();
-			try (OutputStream out = new FileOutputStream(tempFile))
-			{
+			try (OutputStream out = new FileOutputStream(tempFile)) {
 				// Read the data from the server file
 				int read = 0;
 				byte[] bytes = new byte[1024];
 				while ((read = uploadInputStream.read(bytes)) != -1) {
 					out.write(bytes, 0, read);
 				}
-				
+
 				// Create a new event and import the guests.
 				e.importGuests(lastUploadedFile);
 				EventDAO.saveEvent(e);
 			}
-		} 
-		catch (IOException ioex) {
+		} catch (IOException ioex) {
 			ioex.printStackTrace();
 		}
 		return Response.status(200).entity(e.printGuestList()).build();
@@ -412,7 +410,7 @@ public class Services {
 			return messages;
 		}
 	}
-	
+
 	@Secured
 	@GET
 	@Path("/events")
@@ -550,6 +548,146 @@ public class Services {
 			return messages;
 		}
 	}
+
+	@Secured
+	@GET
+	@Path("/events/{eventId}/guests")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Guest> getGuests(@PathParam("eventId") String eventId,
+			@DefaultValue("0") @QueryParam("page") String page,
+			@DefaultValue("15") @QueryParam("per_page") String perPage) {
+		return EventSystem.findGuestsByEventId(eventId, Integer.parseInt(page), Integer.parseInt(perPage));
+	}
+
+	@Secured
+	@GET
+	@Path("/guests/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Guest getGuest(@PathParam("id") String id) {
+		Guest guest = EventSystem.findGuestById(id);
+		EM.getEM().refresh(guest);
+		return guest;
+	}
+
+	@Secured
+	@POST
+	@Path("/guests")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public ArrayList<Message> addGuest(Guest guest, @Context final HttpServletResponse response) throws IOException {
+
+		if (guest == null) {
+
+			response.setStatus(HttpServletResponse.SC_EXPECTATION_FAILED);
+			try {
+				response.flushBuffer();
+			} catch (Exception e) {
+			}
+			messages.add(new Message("op002", "Fail Operation", ""));
+			return messages;
+		} else {
+
+			ArrayList<Message> errMessages = guest.validate();
+			if (errMessages != null) {
+
+				response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
+				try {
+					response.flushBuffer();
+				} catch (Exception e) {
+				}
+				return errMessages;
+			}
+			EntityTransaction guestTransaction = EM.getEM().getTransaction();
+			guestTransaction.begin();
+			Boolean result = EventSystem.addGuest(guest);
+			guestTransaction.commit();
+			if (result) {
+				messages.add(new Message("op001", "Success Operation", ""));
+				return messages;
+			}
+			response.setStatus(HttpServletResponse.SC_EXPECTATION_FAILED);
+			try {
+				response.flushBuffer();
+			} catch (Exception e) {
+			}
+			messages.add(new Message("op002", "Fail Operation", ""));
+			return messages;
+		}
+	}
+
+	@Secured
+	@PUT
+	@Path("/guests/{guestId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public ArrayList<Message> udpateGuest(Guest guest, @PathParam("guestId") String id,
+			@Context final HttpServletResponse response) throws IOException {
+		Guest oldGuest = EventSystem.findGuestById(id);
+		if (oldGuest == null) {
+			response.setStatus(HttpServletResponse.SC_EXPECTATION_FAILED);
+			try {
+				response.flushBuffer();
+			} catch (Exception e) {
+			}
+			messages.add(new Message("op002", "Fail Operation", ""));
+			return messages;
+		} else {
+			ArrayList<Message> errMessages = guest.validate();
+			if (errMessages != null) {
+				response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
+				try {
+					response.flushBuffer();
+				} catch (Exception e) {
+				}
+				return errMessages;
+			}
+		}
+		EntityTransaction guestTransaction = EM.getEM().getTransaction();
+		guestTransaction.begin();
+		Boolean result = oldGuest.update(guest);
+		guestTransaction.commit();
+		if (result) {
+			messages.add(new Message("op001", "Success Operation", ""));
+			return messages;
+		}
+		response.setStatus(HttpServletResponse.SC_EXPECTATION_FAILED);
+		try {
+			response.flushBuffer();
+		} catch (Exception e) {
+		}
+		messages.add(new Message("op002", "Fail Operation", ""));
+		return messages;
+	}
+
+	@Secured
+	@DELETE
+	@Path("/guests/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public ArrayList<Message> deleteGuest(@PathParam("id") String id, @Context final HttpServletResponse response) {
+		Guest guest = EventSystem.findGuestById(id);
+		if (guest == null) {
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			try {
+				response.flushBuffer();
+			} catch (Exception e) {
+			}
+			messages.add(new Message("op002", "Fail Operation", ""));
+			return messages;
+		}
+		EntityTransaction guestTransaction = EM.getEM().getTransaction();
+		guestTransaction.begin();
+
+		Boolean result = EventSystem.removeGuest(guest);
+		guestTransaction.commit();
+		if (result) {
+			messages.add(new Message("op001", "Success Operation", ""));
+			return messages;
+		} else {
+			messages.add(new Message("op002", "Fail Operation", ""));
+			return messages;
+		}
+	}
+
 	private void authenticate(String username, String password) throws Exception {
 		// Authenticate against a database, LDAP, file or whatever
 		// Throw an Exception if the credentials are invalid
