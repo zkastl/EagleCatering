@@ -77,7 +77,6 @@ public class Event implements Serializable {
 	private String status;
 
 	public Event() {
-
 	}
 
 	public Event(String name) {
@@ -121,8 +120,8 @@ public class Event implements Serializable {
 	}
 
 	@XmlElement
-	public void setDateTime(LocalDateTime dateTime) {
-		this.dateTime = dateTime;
+	public void setDateTime(String dateTime) {
+		this.dateTime = LocalDateTime.parse(dateTime);
 	}
 
 	public String getLocation() {
@@ -341,7 +340,7 @@ public class Event implements Serializable {
 	public Boolean update(Event event) {
 		setClient(event.client);
 		setClientID(event.getClientID());
-		setDateTime(event.dateTime);
+		setDateTime(event.dateTime.toString());
 		setEmptySeatsPerTable(event.emptySeatsPerTable);
 		setEventPlanner(event.eventPlanner);
 		setEventPlannerID(event.eventPlannerID);

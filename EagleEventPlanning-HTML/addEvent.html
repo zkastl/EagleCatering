@@ -196,18 +196,18 @@ $(document).ready(function() {
 		var tableSize = $('#tableSize').val();
 		var emptySeatsPerTable = $('#emptySeatsPerTable').val();
 		var selectedValue = $('#status').val();
-		var jsonData = 
-					'{'+  
-					'"name" :"'+ name +'",'+
-					'"dateTime" : "'+dateTime+'",'+
-					'"location" : "'+location+'",'+
-					'"eventPlannerID" : "'+eventPlannerID+'",'+
-					'"clientID" : "'+clientID+'",'+
-					'"tableSize" : "'+tableSize+'",'+
-					'"emptySeatsPerTable" : "'+emptySeatsPerTable+'",'+
-					'"status" : "'+selectedValue+'"}';
-					
-			$.ajax( { 
+		var jsonData = JSON.stringify({  
+			'name': name,
+			'location':location,
+			'tableSize':tableSize,
+			'emptySeatsPerTable':emptySeatsPerTable,
+			'status':selectedValue,
+			'dateTime': new Date(dateTime).toJSON().split(".")[0],
+			'guestList':[],
+			'eventPlannerID': eventPlannerID,
+			'clientID':clientID,
+		});
+		$.ajax( { 
 				url:"/EagleEventPlanning/services/events/",
 				type: "POST",
 				dataType: "json",
@@ -244,7 +244,7 @@ $(document).ready(function() {
 				beforeSend: setHeader
 			});
 			e.preventDefault();
-	});
+		});								
 	});
 </script>
 </body>
