@@ -165,8 +165,6 @@ function getEventPlanners(start) {
 	    			option.innerHTML = eventplanner.name;
 	    			selectEventPlanners.appendChild(option);
 	    			});
-	        	tableHTML+='</table>';
-	        	$('#eventPlanners').html(tableHTML);
 	        },
     	401:function( response ) {
 	    		$('#eventPlanners').html("You must Login first");
