@@ -29,8 +29,10 @@ import javax.ws.rs.core.SecurityContext;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
+import DataAccessObjects.ClientDAO;
 import DataAccessObjects.EM;
 import DataAccessObjects.EventDAO;
+import DataAccessObjects.EventPlannerDAO;
 import ProblemDomain.Client;
 import ProblemDomain.Event;
 import ProblemDomain.EventPlanner;
@@ -460,6 +462,8 @@ public class Services {
 				}
 				return errMessages;
 			}
+			event.setClient(ClientDAO.findClientById(event.clientID));
+			event.setEventPlanner(EventPlannerDAO.findEventPlannerById(event.eventPlannerID));
 			EntityTransaction clientTransaction = EM.getEM().getTransaction();
 			clientTransaction.begin();
 			Boolean result = EventSystem.addEvent(event);

@@ -50,11 +50,17 @@ public class Event implements Serializable {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "eventPlanner", referencedColumnName = "eventPlanner_id")
 	public EventPlanner eventPlanner;
-
+	
+	@Column(name = "eventPlannerID", nullable = false)
+	public long eventPlannerID;
+	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "client", referencedColumnName = "client_id")
 	public Client client;
 
+	@Column(name = "clientID", nullable = false)
+	public long clientID;
+	
 	@OneToMany(mappedBy = "event", targetEntity = Guest.class, fetch = FetchType.EAGER)
 	private Hashtable<String, Guest> guestList = new Hashtable<String, Guest>();
 
@@ -107,7 +113,6 @@ public class Event implements Serializable {
 
 	@XmlElement
 	public void setName(String name) {
-
 		this.name = name;
 	}
 
@@ -117,7 +122,6 @@ public class Event implements Serializable {
 
 	@XmlElement
 	public void setDateTime(LocalDateTime dateTime) {
-
 		this.dateTime = dateTime;
 	}
 
@@ -127,7 +131,6 @@ public class Event implements Serializable {
 
 	@XmlElement
 	public void setLocation(String location) {
-
 		this.location = location;
 	}
 
@@ -137,20 +140,36 @@ public class Event implements Serializable {
 
 	@XmlElement
 	public void setEventPlanner(EventPlanner eventPlanner) {
-
 		this.eventPlanner = eventPlanner;
 	}
+	
+	public long getEventPlannerID() {
+		return eventPlannerID;
+	}
 
+	@XmlElement
+	public void setEventPlannerID(long eventPlannerID) {
+		this.eventPlannerID = eventPlannerID;
+	}
+	
 	public Client getClient() {
 		return client;
 	}
 
 	@XmlElement
 	public void setClient(Client client) {
-
 		this.client = client;
 	}
 
+	public long getClientID() {
+		return clientID;
+	}
+
+	@XmlElement
+	public void setClientID(long clientID) {
+		this.clientID = clientID;
+	}
+	
 	public Hashtable<String, Guest> getGuestList() {
 		return guestList;
 	}
@@ -178,7 +197,6 @@ public class Event implements Serializable {
 
 	@XmlElement
 	public void setTableSize(Integer tableSize) {
-
 		this.tableSize = tableSize;
 	}
 
@@ -188,7 +206,6 @@ public class Event implements Serializable {
 
 	@XmlElement
 	public void setEmptySeatsPerTable(Integer emptySeatsPerTable) {
-
 		this.emptySeatsPerTable = emptySeatsPerTable;
 	}
 
@@ -198,7 +215,6 @@ public class Event implements Serializable {
 
 	@XmlElement
 	public void setSeatingArrangement(Layout seatingArrangement) {
-
 		this.seatingArrangement = seatingArrangement;
 	}
 
@@ -208,15 +224,12 @@ public class Event implements Serializable {
 
 	@XmlElement
 	public void setStatus(String status) {
-
 		this.status = status;
 	}
 
 	public Boolean save() {
-
 		EventDAO.saveEvent(this);
 		return true;
-
 	}
 
 	public Integer getNumberTables() {
@@ -327,9 +340,11 @@ public class Event implements Serializable {
 
 	public Boolean update(Event event) {
 		setClient(event.client);
+		setClientID(event.getClientID());
 		setDateTime(event.dateTime);
 		setEmptySeatsPerTable(event.emptySeatsPerTable);
 		setEventPlanner(event.eventPlanner);
+		setEventPlannerID(event.eventPlannerID);
 		setId(event.eventId);
 		setLocation(event.location);
 		setName(event.name);

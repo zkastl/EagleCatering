@@ -40,11 +40,11 @@
    Location: <input type="text" id="location">
    <span id="locationErr" class="error">* </span>
    <br><br>
-   Event Planner: <input type="text" id="eventPlanner" >
-   <span id="eventPlannerErr" class="error">* </span>
+   Event Planner: <select id="eventPlannerID" size="1" >
+   </select>
    <br><br>
-   Client: <input type="text" id="client" >
-   <span id="clientErr" class="error">* </span>
+   Client: <select id="clientID" size="1" >
+   </select>
    <br><br>
 	Table Size: <input type="number" id="tableSize" min="0" >
    <span id="tableSizeErr" class="error">* </span>
@@ -67,6 +67,8 @@
 </div>
 </div>
 <script>
+var start = 0;
+var page = 100;
 function getCurrentUser() {
     	$.ajax({
     	    url: "/EagleEventPlanning/services/employees/current",
@@ -118,16 +120,81 @@ function getCurrentUser() {
 	  }
 	})
 	}())
+	function getClients(start) {
+
+    	$.ajax({
+    	    url: "/EagleEventPlanning/services/clients?page="+start+"&per_page="+page,
+    	    type: 'GET',
+    	    datatype: 'json',
+    	    statusCode: {
+    	    200: function( response ) {    	    	
+    	    	var selectClients = document.getElementById('clientID');
+    	    		$.each(response, function (i, client) {
+    	    			var option = document.createElement('option');
+    	    			option.value = client.clientId;
+    	    			option.innerHTML = client.name;
+    	    			selectClients.appendChild(option);
+  	        		});
+ 	        },
+        	401:function( response ) {
+  	    		$('#clients').html("You must Login first");
+  	    	},
+    	    403:function( response ) {
+  	    		$('#clients').html("Access to the page forbidden");
+  	    	}
+    	    },
+  	    
+    	    error: function(jqXHR, textStatus, errorThrown) {
+      	        console.log("error " + textStatus);
+      	        console.log("incoming Text " + jqXHR.responseText);},
+    	    beforeSend: setHeader       
+    	  });
+   	  }
+function getEventPlanners(start) {
+
+	$.ajax({
+	    url: "/EagleEventPlanning/services/employees?page="+start+"&per_page="+page,
+	    type: 'GET',
+	    datatype: 'json',
+	    statusCode: {
+	    200: function( response ) {
+	    	var selectEventPlanners = document.getElementById('eventPlannerID');
+	    		$.each(response, function (i, eventplanner) {
+	    			var option = document.createElement('option');
+	    			option.value = eventplanner.eventPlannerId;
+	    			option.innerHTML = eventplanner.name;
+	    			selectEventPlanners.appendChild(option);
+	    			});
+	        	tableHTML+='</table>';
+	        	$('#eventPlanners').html(tableHTML);
+	        },
+    	401:function( response ) {
+	    		$('#eventPlanners').html("You must Login first");
+	    	},
+	    403:function( response ) {
+	    		$('#eventPlanners').html("Access to the page forbidden");
+	    	}
+	    },
+	    
+	    error: function(jqXHR, textStatus, errorThrown) {
+  	        console.log("error " + textStatus);
+  	        console.log("incoming Text " + jqXHR.responseText);},
+	    beforeSend: setHeader       
+	  });
+	  }
 $(document).ready(function() {
 
 	getCurrentUser();
+	getClients(start);
+	getEventPlanners(start);
+	
 	$("#eventForm").submit(function (e){
 			
 		var name = $('#name').val();
 		var dateTime= $('#dateTime').val();
 		var location = $('#location').val();
-		var eventPlanner = $('#eventPlanner').val();
-		var client = $('#client').val();
+		var eventPlannerID = $('#eventPlannerID').val();
+		var clientID = $('#clientID').val();
 		var tableSize = $('#tableSize').val();
 		var emptySeatsPerTable = $('#emptySeatsPerTable').val();
 		var selectedValue = $('#status').val();
@@ -136,8 +203,8 @@ $(document).ready(function() {
 					'"name" :"'+ name +'",'+
 					'"dateTime" : "'+dateTime+'",'+
 					'"location" : "'+location+'",'+
-					'"eventPlanner" : "'+eventPlanner+'",'+
-					'"client" : "'+client+'",'+
+					'"eventPlannerID" : "'+eventPlannerID+'",'+
+					'"clientID" : "'+clientID+'",'+
 					'"tableSize" : "'+tableSize+'",'+
 					'"emptySeatsPerTable" : "'+emptySeatsPerTable+'",'+
 					'"status" : "'+selectedValue+'"}';
