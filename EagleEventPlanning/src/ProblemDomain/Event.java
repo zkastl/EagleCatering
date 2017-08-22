@@ -232,7 +232,7 @@ public class Event implements Serializable {
 	}
 
 	public Integer getNumberTables() {
-		return (seatingArrangement == null) ? seatingArrangement.tableList.size() : 0;
+		return (seatingArrangement == null) ? 0 : seatingArrangement.tableList.size();
 	}
 
 	public void calculateSeatingArrangement() throws Exception {
