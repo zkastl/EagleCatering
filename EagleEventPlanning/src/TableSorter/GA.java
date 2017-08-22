@@ -14,7 +14,6 @@ public class GA {
 	private static int POPULATION_SIZE = 100;
 	private static double MUTATION_RATE = 0.1;
 	private static double DEATH_RATE = 0.15;
-	//private static int FITNESS_THRESHOLD = 10000;
 	private static int MAX_GENERATIONS = 10000;
 	private static Random random = new Random();
 	private static Comparator<Layout> descendCompare = new Comparator<Layout>() {

@@ -1,75 +1,34 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="ISO-8859-1">
-<title>Eagle Event Planning</title>
-<link rel="stylesheet" type="text/css" href="style.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+	<meta charset="ISO-8859-1">
+	<title>Eagle Event Planning</title>
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+	<script src='js/common.js'></script>
+	<script src='js/events.js' type='application/javascript'></script>
 </head>
 <body>
-<script>
-function getCurrentUser() {
-    	$.ajax({
-    	    url: "/EagleEventPlanning/services/employees/current",
-    	    type: 'GET',
-    	    datatype: 'json',
-    	    statusCode: {
-    	    200: function( planner ) {
-    	
-    			$('#userWelcome').html("Welcome, "+planner.name);
-    	    },
-    	    401:function( response ) {
-    			$('#userWelcome').html("You must login first.");}
-    	    },
-    	    
-    	    error: function(jqXHR, textStatus, errorThrown) {
-      	        console.log("error " + textStatus);
-      	        console.log("incoming Text " + jqXHR.responseText);},
-    	    beforeSend: setHeader       
-    	  });   	
-    }
-  
-	function getCookie(cname) {
-	    var name = cname + "=";
-	    var decodedCookie = decodeURIComponent(document.cookie);
-	    var ca = decodedCookie.split(';');
-	    for(var i = 0; i <ca.length; i++) {
-	        var c = ca[i];
-	        while (c.charAt(0) == ' ') {
-	            c = c.substring(1);
-	        }
-	        if (c.indexOf(name) == 0) {
-	            return c.substring(name.length, c.length);
-	        }
-	    }
-	    return "";
-	}
-	
-	function setHeader(xhr) {
-		  token = getCookie("token");
-		  xhr.setRequestHeader('Authorization', 'Bearer '+token );		  
-	}
-	$(document).ready(function() {
-    		getCurrentUser();
-    })
-</script>
-<h1>Eagle Event Planning</h1>
-<div style="color: white; background: gray; width: 100%; font-size: 12;">
-<table class="nav">
-	<tr>
-		<td><a href="MainPage.html">Home</a></td>
-		<td><a href="contactinfo.html">Contact</a></td>
-		<td><a href="events.html">Events</a></td>
-		<td><a href="import.html">Import</a></td>	
-		<td><a href="ClientManagement.html">Clients</a></td>
-		<td><a href="EmployeeManagement.html">Employees</a></td>
-		<td><a href="logout.html">Logout</a></td>
-		<td id="userWelcome" style="text-align: right; width: 100%"></td>
-	</tr>
-	</table>
-</div>
+	<h1>Eagle Event Planning</h1>
+		<div style="color: white; background: gray; width: 100%; font-size: 12;">
+		<table class="nav" id="menuBar">
+			<tr>
+				<td><a href="MainPage.html">Home</a></td>
+				<td><a href="contactinfo.html">Contact</a></td>
+				<td id="login-logout"><a href="Login.html">Login</a></td>
+			</tr>
+		</table>
+		</div>
 
-<div id="content" align="center" style="background: white; width:75%; font-size: 12;">
+<div id="content"
+	 align="center" 
+	 style="margin:auto;
+            background-color:white;
+            padding:10px;
+            transform: translate(0px, 25px);
+            max-width:500px;
+            border-style:solid;
+            border-width:2px;">
     <h2>Events</h2><br>
 	<table class="center" id="events"></table>
 	<br><br>
@@ -84,160 +43,17 @@ function getCurrentUser() {
 	</form>
 	
 	<form class='inline' action="addEvent.html" method ="get">
-	<button type="submit" >Add</button>
+		<input id='addId' type='hidden' name='id' value='' />
+		<input type='submit' value='Add' />
 	</form>
 	<form class='inline' action="deleteEvent.html" method="get">
 		<input id="deleteId" type="hidden" name="id" value="">
 	    <input type="submit" value="Delete">
 	</form>
-	
-	<form id='uploadcsv' method='post' action="" align="center">
-       <input id="file" type="file" />
-       <input id='loadfile' value='Load' type='button' />
-       <div id='filecontent'></div>
-    </form>
-    <script>
-        (function ($) {
-            $('#loadfile').click(function () {
-                if (!window.FileReader) {
-                    return alert("FileReader API is not supported.");
-                };
-                var $i = $('#file'), input = $i[0];
-                if (input.files && input.files[0]) {
-                    file = input.files[0];
-                    fr = new FileReader();
-                    fr.onload = function () {
-                        console.log(fr.result);
-                        $('#filecontent').empty();
-
-                        // Test get request for the login page
-                        //jQuery.get("login.html", function (data, status) { console.log("Data: " + data + "\nStatus: " + status); });
-
-                        // Test post request
-                        jQuery.post("events.html", fr.result, function (data, status) { console.log("Data: " + data + "\nStatus: " + status); });
-
-                        //$('#filecontent').append($('<div/>').html(fr.result));
-                    };
-                    fr.readAsText(file)
-                };
-            })
-        })(jQuery);
-        function handleFileSelect() {
-        }
-
-        function receivedText() {
-            document.getElementById('content').appendChild(document.createTextNode(fr.result));
-        }
-    </script>
+	<form class='inline' action='guestlist.html' method='get'>
+		<input id="guestId" type="hidden" name="id" value="" />
+		<input type='submit' value="Guests" />
+	</form>
 </div>
-<script>
-
-	var start = 0;
-	var page = 15;
-
-	
-	function getCookie(cname) {
-	    var name = cname + "=";
-	    var decodedCookie = decodeURIComponent(document.cookie);
-	    var ca = decodedCookie.split(';');
-	    for(var i = 0; i <ca.length; i++) {
-	        var c = ca[i];
-	        while (c.charAt(0) == ' ') {
-	            c = c.substring(1);
-	        }
-	        if (c.indexOf(name) == 0) {
-	            return c.substring(name.length, c.length);
-	        }
-	    }
-	    return "";
-	}
-	
-	function getPrevious()
-	{
-		start = start-page;
-		if (start <1)  start = 0;
-		createTable(start);
-	}
-	
-	function getNext()
-	{
-		if ($("#events") && $("#events").prop('rows').length-1 == page) start=start+page;
-		createTable(start);
-	}
-
-    function selectChange() 
-    {
-        id = getId();
-        $("#editId").val(id);
-        $("#deleteId").val(id);   
-    }
-    
-    function getId()
-	{ 
-	  return jQuery( 'input[name=selectedRow]:checked' ).val()
-	}
-    
-    function getCurrentUser() {
-    	$.ajax({
-    	    url: "/EagleEventPlanning/services/employees/current",
-    	    type: 'GET',
-    	    datatype: 'json',
-    	    statusCode: {
-    	    200: function( planner ) {
-    	
-    			$('#userWelcome').html("Welcome, "+planner.name);
-    	    },
-    	    401:function( response ) {
-    	    		$('#eventPlanners').html("You must Login first");}
-    	    },
-    	    
-    	    error: function(jqXHR, textStatus, errorThrown) {
-      	        console.log("error " + textStatus);
-      	        console.log("incoming Text " + jqXHR.responseText);},
-    	    beforeSend: setHeader       
-    	  });   	
-    }
-  
-    function createTable(start) {
-
-    	$.ajax({
-    	    url: "/EagleEventPlanning/services/events?page="+start+"&per_page="+page,
-    	    type: 'GET',
-    	    datatype: 'json',
-    	    statusCode: {
-    	    200: function( response ) {    	    	
-    	    	var tableHTML = '<tr><th></th><th width= 50px>ID</th><th width= 100px>Name</th></tr>';
-    	    		$.each(response, function (i, event) {
-    	    			tableHTML += '<tr><td><input type="radio" onchange= "selectChange()" name="selectedRow" value='+event.eventId+'><td>' + event.eventId + '</td><td>' + event.name + '</td></tr>';
-  	        		});
-  	        	tableHTML+='</table>';
-  	        	$('#events').html(tableHTML);
- 	        },
-        	401:function( response ) {
-  	    		$('#events').html("You must Login first");
-  	    	},
-    	    403:function( response ) {
-  	    		$('#events').html("Access to the page forbidden");
-  	    	}
-    	    },
-  	    
-    	    error: function(jqXHR, textStatus, errorThrown) {
-      	        console.log("error " + textStatus);
-      	        console.log("incoming Text " + jqXHR.responseText);},
-    	    beforeSend: setHeader       
-    	  });
-   	  }
-  	  
-	function setHeader(xhr) {
-		  token = getCookie("token");
-		  xhr.setRequestHeader('Authorization', 'Bearer '+token );		  
-	}
-	$(document).ready(function() {
-    		$("#previous").click(function() {getPrevious()});
-    		$("#next").click(function() {getNext()});
-    		getCurrentUser();
-    		createTable(start);
-    })
-</script>
 </body>
 </html>

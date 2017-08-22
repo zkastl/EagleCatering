@@ -1,9 +1,12 @@
 {
   "ExpandedNodes": [
     "",
+    "\\EagleEventPlanning",
     "\\EagleEventPlanning-HTML",
+    "\\EagleEventPlanning\\src",
+    "\\EagleEventPlanning\\src\\REST",
     "\\WebContent"
   ],
-  "SelectedNode": "\\EagleEventPlanning-HTML\\events.html",
+  "SelectedNode": "\\EagleEventPlanning\\src\\REST\\Services.java",
   "PreviewInSolutionExplorer": false
 }
