@@ -1,6 +1,5 @@
 package DataAccessObjects;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.TypedQuery;
@@ -23,20 +22,9 @@ public class GuestDAO {
 	}
 
 	public static List<Guest> getAllGuestsForEvent(long eventId, int start, int perPage) {
-		List<Guest> allGuests = getAllGuests();
-		List<Guest> guestsForEvent = new ArrayList<Guest>();
-		int i = 0;
-
-		for (Guest guest : allGuests) {
-			if (guest.event.getEventId() == eventId) {
-				if (i >= start)
-					guestsForEvent.add(guest);
-				i++;
-				if (guestsForEvent.size() >= perPage)
-					return guestsForEvent;
-			}
-		}
-		return guestsForEvent;
+		TypedQuery<Guest> query = EM.getEM()
+				.createQuery("SELECT guest FROM guest guest WHERE guest.eventID = '" + eventId + "'", Guest.class);
+		return query.setFirstResult(start).setMaxResults(perPage).getResultList();
 	}
 
 	public static void saveGuest(Guest guest) {

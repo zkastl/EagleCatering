@@ -85,8 +85,11 @@ public class Services {
 				}
 
 				// Create a new event and import the guests.
+				EntityTransaction eventTransaction = EM.getEM().getTransaction();
+				eventTransaction.begin();
 				e.importGuests(lastUploadedFile);
 				EventDAO.saveEvent(e);
+				eventTransaction.commit();
 			}
 		} catch (IOException ioex) {
 			ioex.printStackTrace();
