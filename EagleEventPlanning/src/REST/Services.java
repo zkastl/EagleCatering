@@ -65,13 +65,13 @@ public class Services {
 
 	@Secured
 	@POST
-	@Path("/import/{id}/uploadfile")
-	@Produces(MediaType.MULTIPART_FORM_DATA)
+	@Path("/importguests/{id}")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response importGuests(@PathParam("id") String id, @FormDataParam("file") InputStream uploadInputStream,
 			@FormDataParam("file") FormDataContentDisposition fileDetail) {
 
-		Event e = new Event();
+		Event e = EventSystem.findEventById(id);
 		// Save the file to the server
 		try {
 			File tempFile = File.createTempFile("upload" + "001", ".tmp");
@@ -125,7 +125,7 @@ public class Services {
 		return planner;
 	}
 
-	@Secured({ Role.Admin })
+	@Secured
 	@GET
 	@Path("/employees")
 	@Produces(MediaType.APPLICATION_JSON)

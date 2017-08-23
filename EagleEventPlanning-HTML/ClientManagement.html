@@ -127,8 +127,17 @@
     	    statusCode: {
     	    200: function( response ) {    	    	
     	    	var tableHTML = '<tr><th></th><th width= 50px>ID</th><th width= 100px>Name</th></tr>';
+    	    	var first = true;
     	    		$.each(response, function (i, client) {
-    	    			tableHTML += '<tr><td><input type="radio" onchange= "selectChange()" name="selectedRow" value='+client.clientId+'><td>' + client.clientId + '</td><td>' + client.name + '</td></tr>';
+    	    			if(first) {
+    	    				tableHTML += '<tr><td><input type="radio" onchange= "selectChange()" name="selectedRow" value='+client.clientId+' checked><td>' + client.clientId + '</td><td>' + client.name + '</td></tr>';
+    	    				first = false;
+    	    				id = client.clientId;
+    	    		        $("#editId").val(id);
+    	    		        $("#deleteId").val(id); 
+    	    			} else {
+    	    				tableHTML += '<tr><td><input type="radio" onchange= "selectChange()" name="selectedRow" value='+client.clientId+'><td>' + client.clientId + '</td><td>' + client.name + '</td></tr>';
+    	    			}
   	        		});
   	        	tableHTML+='</table>';
   	        	$('#clients').html(tableHTML);

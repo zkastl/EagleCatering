@@ -23,14 +23,14 @@ function getPrevious()
 	start = start-page;
 	if (start <1)
 	   start = 0;
-	createTable(start);
+	createEventTable(start);
 }
 	
 function getNext()
 {
 	if ($("#events") && $("#events").prop('rows').length-1 == page)
 	   start=start+page;
-	createTable(start);
+	createEventTable(start);
 }
 
 function selectChange() {
@@ -74,8 +74,18 @@ function createEventTable(start) {
     statusCode: {
         200:function( response ) {
             var tableHTML = '<tr><th></th><th width= 50px>ID</th><th width= 100px>Name</th></tr>';
+            var first = true;
             $.each(response, function (i, event) {
-    	       tableHTML += '<tr><td><input type="radio" onchange= "selectChange()" name="selectedRow" value='+event.eventId+'><td>' + event.eventId + '</td><td>' + event.name + '</td></tr>';
+            	if(first) {
+            		tableHTML += '<tr><td><input type="radio" onchange= "selectChange()" name="selectedRow" value='+event.eventId+' checked><td>' + event.eventId + '</td><td>' + event.name + '</td></tr>';
+            		first = false;
+            		id = event.eventId;
+            	    $("#editId").val(id);
+            	    $("#deleteId").val(id); 
+            	    $("#guestId").val(id);
+            	} else {
+            		tableHTML += '<tr><td><input type="radio" onchange= "selectChange()" name="selectedRow" value='+event.eventId+'><td>' + event.eventId + '</td><td>' + event.name + '</td></tr>';
+            	}
     	    });
             tableHTML+='</table>';
   	        $('#events').html(tableHTML);

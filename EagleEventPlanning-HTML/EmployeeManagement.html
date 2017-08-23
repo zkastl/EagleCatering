@@ -125,10 +125,19 @@
     	    type: 'GET',
     	    datatype: 'json',
     	    statusCode: {
-    	    200: function( response ) {    	    	
-    	    	var tableHTML = '<tr><th></th><th width= 50px>ID</th><th width= 100px>Name</th></tr>';
+    	    200: function( response ) { 
+    	    	var tableHTML = '<tr><th></th><th width= 50px>ID</th><th width= 100px>Name</th></tr>';   	   
+    	    	var first = true;
     	    		$.each(response, function (i, eventplanner) {
-    	    			tableHTML += '<tr><td><input type="radio" onchange= "selectChange()" name="selectedRow" value='+eventplanner.eventPlannerId+'><td>' + eventplanner.eventPlannerId + '</td><td>' + eventplanner.name + '</td></tr>';
+    	    			if(first) {
+    	    				tableHTML += '<tr><td><input type="radio" onchange= "selectChange()" name="selectedRow" value='+eventplanner.eventPlannerId+' checked><td>' + eventplanner.eventPlannerId + '</td><td>' + eventplanner.name + '</td></tr>';
+    	    				first = false;
+    	    				id = eventplanner.eventPlannerId;
+    	    		        $("#editId").val(id);
+    	    		        $("#deleteId").val(id);
+    	    			} else {
+        	    			tableHTML += '<tr><td><input type="radio" onchange= "selectChange()" name="selectedRow" value='+eventplanner.eventPlannerId+'><td>' + eventplanner.eventPlannerId + '</td><td>' + eventplanner.name + '</td></tr>';
+    	    			}
   	        		});
   	        	tableHTML+='</table>';
   	        	$('#eventPlanners').html(tableHTML);
