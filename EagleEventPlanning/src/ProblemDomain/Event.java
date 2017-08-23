@@ -50,17 +50,17 @@ public class Event implements Serializable {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "eventPlanner", referencedColumnName = "eventPlanner_id")
 	public EventPlanner eventPlanner;
-	
+
 	@Column(name = "eventPlannerID", nullable = false)
 	public long eventPlannerID;
-	
+
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "client", referencedColumnName = "client_id")
 	public Client client;
 
 	@Column(name = "clientID", nullable = false)
 	public long clientID;
-	
+
 	@OneToMany(mappedBy = "event", targetEntity = Guest.class, fetch = FetchType.EAGER)
 	private Hashtable<String, Guest> guestList = new Hashtable<String, Guest>();
 
@@ -141,7 +141,7 @@ public class Event implements Serializable {
 	public void setEventPlanner(EventPlanner eventPlanner) {
 		this.eventPlanner = eventPlanner;
 	}
-	
+
 	public long getEventPlannerID() {
 		return eventPlannerID;
 	}
@@ -150,7 +150,7 @@ public class Event implements Serializable {
 	public void setEventPlannerID(long eventPlannerID) {
 		this.eventPlannerID = eventPlannerID;
 	}
-	
+
 	public Client getClient() {
 		return client;
 	}
@@ -168,7 +168,7 @@ public class Event implements Serializable {
 	public void setClientID(long clientID) {
 		this.clientID = clientID;
 	}
-	
+
 	public Hashtable<String, Guest> getGuestList() {
 		return guestList;
 	}
@@ -186,7 +186,7 @@ public class Event implements Serializable {
 	}
 
 	public List<Guest> getAllGuests(int page, int perPage) {
-		List<Guest> tempGuestList = GuestDAO.getAllGuestsForEvent(this, page, perPage);
+		List<Guest> tempGuestList = GuestDAO.getAllGuestsForEvent(this.eventId, page, perPage);
 		return tempGuestList;
 	}
 
@@ -236,11 +236,11 @@ public class Event implements Serializable {
 	}
 
 	public void calculateSeatingArrangement() throws Exception {
-		if(this.tableSize == null)
+		if (this.tableSize == null)
 			this.tableSize = 8;
-		if(this.emptySeatsPerTable == null)
+		if (this.emptySeatsPerTable == null)
 			this.emptySeatsPerTable = 2;
-		
+
 		this.seatingArrangement = TableSorter.GA.runGA(guestList.values(), this.tableSize, this.emptySeatsPerTable);
 	}
 
@@ -282,12 +282,16 @@ public class Event implements Serializable {
 							lastName = data;
 							break;
 						case "Same Table":
-							try { sameTable.add(Integer.parseInt(data)); }
-							catch (NumberFormatException nfex) { /* bad value, ignore it  */ }								
+							try {
+								sameTable.add(Integer.parseInt(data));
+							} catch (NumberFormatException nfex) {
+								/* bad value, ignore it */ }
 							break;
 						case "Not Same Table":
-							try { notSameTable.add(Integer.parseInt(data)); }
-							catch (NumberFormatException nfex) { /* bad value, ignore it  */ }	
+							try {
+								notSameTable.add(Integer.parseInt(data));
+							} catch (NumberFormatException nfex) {
+								/* bad value, ignore it */ }
 							break;
 						case "Table Number":
 							tableNumber = Integer.parseInt(data);

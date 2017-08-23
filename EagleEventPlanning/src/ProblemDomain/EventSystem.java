@@ -6,6 +6,7 @@ import java.util.List;
 import DataAccessObjects.ClientDAO;
 import DataAccessObjects.EventDAO;
 import DataAccessObjects.EventPlannerDAO;
+import DataAccessObjects.GuestDAO;
 import DataAccessObjects.TokenDAO;
 
 public class EventSystem {
@@ -98,24 +99,22 @@ public class EventSystem {
 		return true;
 	}
 
-	public static List<Guest> findGuestsByEventId(String eventId, int parseInt, int parseInt2) {
-		// TODO Auto-generated method stub
-		return null;
+	public static List<Guest> findGuestsByEventId(long eventId, int page, int perPage) {
+		return GuestDAO.getAllGuestsForEvent(eventId, page, perPage);
 	}
 
 	public static Boolean addGuest(Guest guest) {
-		// TODO Auto-generated method stub
-		return null;
+		GuestDAO.saveGuest(guest);
+		return true;
 	}
 
 	public static Guest findGuestById(String id) {
-		// TODO Auto-generated method stub
-		return null;
+		return GuestDAO.findGuestById(Long.parseLong(id));
 	}
 
 	public static Boolean removeGuest(Guest guest) {
-		// TODO Auto-generated method stub
-		return null;
+		GuestDAO.removeGuest(guest);
+		return true;
 	}
 
 }
