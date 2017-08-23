@@ -43,7 +43,7 @@ public class Guest implements Serializable {
 	@ManyToOne(optional = false)
 	public Table assignedTable;
 
-	@Transient
+	@Column(name = "tableNumber")
 	public int tableNumber;
 
 	@Transient
@@ -113,8 +113,6 @@ public class Guest implements Serializable {
 	public Boolean update(Guest guest) {
 		this.firstName = guest.firstName;
 		this.lastName = guest.lastName;
-
-		// TODO get this to work as expected
 		this.tableNumber = guest.tableNumber;
 
 		return true;

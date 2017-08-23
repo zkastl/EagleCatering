@@ -112,9 +112,9 @@ $(document).ready(function() {
 			var userName= $('#userName').val();
 			var password = $('#password').val();
 			var email = $('#email').val();
-			var phoneNumber = $('#phoneNumber').val();
+			var phoneNumber = $('#phoneNumber').val();			
+			var role = $('#role').val();
 			
-			var selectedValues = $('#role').val();
 			var jsonData = 
 						'{'+  
 						'"name" :"'+ name +'",'+
@@ -122,13 +122,7 @@ $(document).ready(function() {
 						'"password" : "'+password+'",'+
 						'"email" : "'+email+'",'+
 						'"phoneNumber" : "'+phoneNumber+'",'+
-						'"roleAssignments" : [';
-						cm=",";
-					$.each(selectedValues, function(i,e){
-							if (i==selectedValues.length-1) cm='';
-						    jsonData += ' { "role":"'+ e+'"}'+cm;
-						});
-					jsonData +="]}";
+						'"roleAssignments" : [ { "role" : "'+ role+'"} ] }';
 					
 			$.ajax( { 
 				url:"/EagleEventPlanning/services/employees/",
