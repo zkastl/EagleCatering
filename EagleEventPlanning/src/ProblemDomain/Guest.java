@@ -47,7 +47,7 @@ public class Guest implements Serializable {
 	public int tableNumber;
 
 	@Transient
-	public int eventID;
+	public long eventID;
 
 	@JoinColumn(name = "event", referencedColumnName = "event_id")
 	@ManyToOne(optional = false)

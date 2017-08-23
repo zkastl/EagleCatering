@@ -36,7 +36,7 @@ public class Event implements Serializable {
 	@Id // signifies the primary key
 	@Column(name = "event_id", nullable = false)
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private int eventId;
+	private long eventId;
 
 	@Column(name = "name", nullable = false, length = 40)
 	private String name;
@@ -98,11 +98,11 @@ public class Event implements Serializable {
 		this.status = status;
 	}
 
-	public int getEventId() {
+	public long getEventId() {
 		return eventId;
 	}
 
-	public void setId(int eventId) {
+	public void setId(long eventId) {
 		this.eventId = eventId;
 	}
 
@@ -348,7 +348,7 @@ public class Event implements Serializable {
 		setEmptySeatsPerTable(event.emptySeatsPerTable);
 		setEventPlanner(event.eventPlanner);
 		setEventPlannerID(event.eventPlannerID);
-		setId(event.eventId);
+		//setId(event.eventId);
 		setLocation(event.location);
 		setName(event.name);
 		setSeatingArrangement(event.seatingArrangement);
