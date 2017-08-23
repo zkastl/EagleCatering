@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "guest")
@@ -39,8 +39,7 @@ public class Guest implements Serializable {
 	@Column(name = "notSameTable", nullable = false)
 	public List<Integer> notSameTable;
 
-	@JoinColumn(name = "assignedTable", referencedColumnName = "table_id")
-	@ManyToOne(optional = false, cascade = CascadeType.PERSIST)
+	@Transient
 	public Table assignedTable;
 
 	@Column(name = "tableNumber")

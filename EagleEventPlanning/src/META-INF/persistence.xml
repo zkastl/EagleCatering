@@ -9,7 +9,6 @@
     <class>ProblemDomain.EventPlanner</class>
     <class>ProblemDomain.Guest</class>
     <class>ProblemDomain.RoleAssignment</class>
-    <class>ProblemDomain.Table</class>
     <class>ProblemDomain.Token</class>
          
         <properties>

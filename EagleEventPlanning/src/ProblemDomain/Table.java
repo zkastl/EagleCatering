@@ -4,44 +4,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.xml.bind.annotation.XmlRootElement;
-
-@XmlRootElement(name = "table")
-@Entity(name = "\"table\"")
 public class Table implements Serializable, Comparable<Table> {
 
 	private static final long serialVersionUID = 1L;
-	@Id // signifies the primary key
-	@Column(name = "table_id", nullable = false)
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private int tableId;
-
-	@Column(name = "tableNumber", nullable = false)
 	public int tableNumber;
-
-	@OneToMany(mappedBy = "assignedTable", targetEntity = Guest.class, fetch = FetchType.EAGER)
 	public List<Guest> seatedGuests;
-
-	@Column(name = "capacity", nullable = false)
 	public int capacity;
-
-	@Column(name = "numberOfEmptySeats", nullable = false)
 	public int numberOfEmptySeats;
-
-	@Column(name = "eventID", nullable = false)
 	public int eventID;
-
-	// default constructor for JPA
-	public Table() {
-
-	}
 
 	public Table(int tableNumber, int capacity, int emptySeats, int eventID) {
 		this.tableNumber = tableNumber;
@@ -79,13 +49,13 @@ public class Table implements Serializable, Comparable<Table> {
 	public int compareTo(Table o) {
 		if (this.tableNumber < o.tableNumber)
 			return -1;
-		else if(this.tableNumber == o.tableNumber)
+		else if (this.tableNumber == o.tableNumber)
 			return 0;
 		else
 			return 1;
-		
+
 	}
-	
+
 	public boolean isFull() {
 		return this.seatedGuests.size() >= (this.capacity - this.numberOfEmptySeats);
 	}
