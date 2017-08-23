@@ -64,9 +64,10 @@ public class Services {
 	ServletContext context;
 
 	@Secured
-	@GET
+	@POST
 	@Path("/importguests/{id}")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response importGuests(@PathParam("id") String id, @FormDataParam("file") InputStream uploadInputStream,
 			@FormDataParam("file") FormDataContentDisposition fileDetail) {
 
