@@ -111,8 +111,13 @@ public class Guest implements Serializable {
 	}
 
 	public Boolean update(Guest guest) {
-		// TODO Auto-generated method stub
-		return null;
+		this.firstName = guest.firstName;
+		this.lastName = guest.lastName;
+
+		// TODO get this to work as expected
+		this.tableNumber = guest.tableNumber;
+
+		return true;
 	}
 
 }
