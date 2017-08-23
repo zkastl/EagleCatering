@@ -49,7 +49,17 @@
 			<input id="eventId" type="hidden" name="eventId" value="">
 			<input id="deleteId" type="hidden" name="id" value="">
 		    <input type="submit" value="Delete">
+            </div>
 		</form>
+		<form id='importform' method="post">
+                <fieldset>
+                    <div style="margin:auto;">
+                        <legend>Guest List Import</legend>
+                        <input id="uploadfile" type="file" accept=".csv" />
+                        <input id='importbox' type="submit" value="Upload" />
+                    </div>
+                </fieldset>
+        </form>
 	</div>
 </div>
  
@@ -155,6 +165,28 @@
 		  token = getCookie("token");
 		  xhr.setRequestHeader('Authorization', 'Bearer '+token );		  
 	}
+
+	$('#importbox').click(function (e) {
+                var file = $('#uploadfile').get(0).files[0];                
+                var uploadData = new FormData();
+                uploadData.append('file', file);
+                var id = $.urlParam("id");
+                var postUrl = "/EagleEventPlanning/services/importguests/" + id;
+                $.ajax({
+	                url: postUrl,
+	                type: 'POST',
+	                data: uploadData,
+	                cache: false,
+	                contentType: false,
+	                processData: false,
+	                statusCode: {
+                        200: function(response) {
+                            alert(response.statusText);
+	                    }
+                    },
+    	    		beforeSend: setHeader    
+	            });
+    });
 	
 	$.urlParam = function(name){
 	    var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);

@@ -64,14 +64,13 @@ public class Services {
 	ServletContext context;
 
 	@Secured
-	@POST
-	@Path("/import/{id}/uploadfile")
-	@Produces(MediaType.MULTIPART_FORM_DATA)
+	@GET
+	@Path("/importguests/{id}")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public Response importGuests(@PathParam("id") String id, @FormDataParam("file") InputStream uploadInputStream,
 			@FormDataParam("file") FormDataContentDisposition fileDetail) {
 
-		Event e = new Event();
+		Event e = EventSystem.findEventById(id);
 		// Save the file to the server
 		try {
 			File tempFile = File.createTempFile("upload" + "001", ".tmp");
