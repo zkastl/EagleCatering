@@ -419,7 +419,12 @@ public class Services {
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Event> getEvent(@DefaultValue("0") @QueryParam("page") String page,
 			@DefaultValue("15") @QueryParam("per_page") String perPage) {
-		return EventSystem.findAllEvents(Integer.parseInt(page), Integer.parseInt(perPage));
+		try {
+			List<Event> events = EventSystem.findAllEvents(Integer.parseInt(page), Integer.parseInt(perPage));
+			return events;
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 	@Secured
@@ -560,7 +565,8 @@ public class Services {
 	public List<Guest> getGuests(@PathParam("eventId") String eventId,
 			@DefaultValue("0") @QueryParam("page") String page,
 			@DefaultValue("15") @QueryParam("per_page") String perPage) {
-		return EventSystem.findGuestsByEventId(eventId, Integer.parseInt(page), Integer.parseInt(perPage));
+		return EventSystem.findGuestsByEventId(Long.parseLong(eventId), Integer.parseInt(page),
+				Integer.parseInt(perPage));
 	}
 
 	@Secured

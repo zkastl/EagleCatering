@@ -36,7 +36,8 @@ function getNext()
 function selectChange() {
     id = getId();
     $("#editId").val(id);
-    $("#deleteId").val(id);   
+    $("#deleteId").val(id); 
+    $("#guestId").val(id);
 }
     
 function getId() {

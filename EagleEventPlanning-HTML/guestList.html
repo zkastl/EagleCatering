@@ -124,7 +124,7 @@
     function createTable(start) {
 
     	$.ajax({
-    	    url: "/EagleEventPlanning/services/employees?page="+start+"&per_page="+page,
+    	    url: "/EagleEventPlanning/services/events/"+$.urlParam("id")+"/guests"+"?page="+start+"&per_page="+page,
     	    type: 'GET',
     	    datatype: 'json',
     	    statusCode: {
@@ -155,6 +155,17 @@
 		  token = getCookie("token");
 		  xhr.setRequestHeader('Authorization', 'Bearer '+token );		  
 	}
+	
+	$.urlParam = function(name){
+	    var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+	    if (results==null){
+	       return null;
+	    }
+	    else{
+	       return results[1] || 0;
+	    }
+	}
+
 	$(document).ready(function() {
     		$("#previous").click(function() {getPrevious()});
     		$("#next").click(function() {getNext()});
