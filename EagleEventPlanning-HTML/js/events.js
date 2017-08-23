@@ -23,14 +23,14 @@ function getPrevious()
 	start = start-page;
 	if (start <1)
 	   start = 0;
-	createTable(start);
+	createEventTable(start);
 }
 	
 function getNext()
 {
 	if ($("#events") && $("#events").prop('rows').length-1 == page)
 	   start=start+page;
-	createTable(start);
+	createEventTable(start);
 }
 
 function selectChange() {

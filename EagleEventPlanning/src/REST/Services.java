@@ -125,7 +125,7 @@ public class Services {
 		return planner;
 	}
 
-	@Secured({ Role.Admin })
+	@Secured
 	@GET
 	@Path("/employees")
 	@Produces(MediaType.APPLICATION_JSON)
