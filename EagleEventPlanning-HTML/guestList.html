@@ -55,7 +55,7 @@
 		</form>
 		<br><br>		
 		<form>
-			<input class='inline' id='testButton' type='button' value='Print Guest' />
+			<input class='inline' id='testButton' type='button' value='Create Place Cards' />
 		</form>
 	</div>
 </div>
@@ -69,10 +69,172 @@
 	var firstName = "Nicholas";
 	var lastName = "Becker";
 	var tableNumber = 42;
-	var fileName = "placecard" + firstName + lastName +".xml";
-	var content = "";
-	function updateContent() {
-		content = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
+	var fileName = "placecards.xml";
+	var placeCards = "";
+	var pageBreak = '<w:r><w:br w:type="page"/></w:r>';
+	var first = true;
+	
+	function getCookie(cname) {
+	    var name = cname + "=";
+	    var decodedCookie = decodeURIComponent(document.cookie);
+	    var ca = decodedCookie.split(';');
+	    for(var i = 0; i <ca.length; i++) {
+	        var c = ca[i];
+	        while (c.charAt(0) == ' ') {
+	            c = c.substring(1);
+	        }
+	        if (c.indexOf(name) == 0) {
+	            return c.substring(name.length, c.length);
+	        }
+	    }
+	    return "";
+	}
+	
+	function getPrevious()
+	{
+		start = start-page;
+		if (start <1)  start = 0;
+		createTable(start);
+	}
+	
+	function getNext()
+	{
+		if ($("#guests") && $("#guests").prop('rows').length-1 == page) start=start+page;
+		createTable(start);
+	}
+
+    function selectChange() 
+    {
+        id = getId();
+        $("#editId").val(id);
+        $("#deleteId").val(id);
+    }
+    
+    function getId()
+	{ 
+	  return jQuery( 'input[name=selectedRow]:checked' ).val()
+	}
+    
+    function getCurrentUser() {
+    	$.ajax({
+    	    url: "/EagleEventPlanning/services/employees/current",
+    	    type: 'GET',
+    	    datatype: 'json',
+    	    statusCode: {
+    	    200: function( planner ) {
+    	
+    			$('#userWelcome').html("Welcome, "+planner.name);
+    	    },
+    	    401:function( response ) {
+    	    		$('#guests').html("You must Login first");}
+    	    },
+    	    
+    	    error: function(jqXHR, textStatus, errorThrown) {
+      	        console.log("error " + textStatus);
+      	        console.log("incoming Text " + jqXHR.responseText);},
+    	    beforeSend: setHeader       
+    	  });   	
+    }
+  
+    function createTable(start) {
+
+    	$.ajax({
+    	    url: "/EagleEventPlanning/services/events/"+eventId+"/guests"+"?page="+start+"&per_page="+page,
+    	    type: 'GET',
+    	    datatype: 'json',
+    	    statusCode: {
+    	    200: function( response ) {
+				createPlaceCardsHeader();    	    
+    	    	first = true;
+    	    	var tableHTML = '<tr><th></th><th width= 100px>First Name</th><th width= 100px>Last Name</th><th width= 50px>Table</th><th width= 100px>Comments</th></tr>';
+    	    		$.each(response, function (i, guest) {
+						firstName = guest.firstName;
+						lastName = guest.lastName;
+						tableNumber = guest.tableNumber;
+						addPlaceCard();
+								
+    	    			if(first){
+    	    				tableHTML += '<tr><td><input type="radio" onchange= "selectChange()" name="selectedRow" value='+guest.guestId+' checked><td>' + guest.firstName + '</td><td>' + guest.lastName + '</td><td>' + guest.tableNumber + '</td><td>' + guest.comments + '</td></tr>';
+    	    				first=false;
+    	    				id = guest.guestId;
+    	    		        $("#editId").val(id);
+    	    		        $("#deleteId").val(id);
+    	    			} else {
+    	    				tableHTML += '<tr><td><input type="radio" onchange= "selectChange()" name="selectedRow" value='+guest.guestId+'><td>' + guest.firstName + '</td><td>' + guest.lastName + '</td><td>' + guest.tableNumber + '</td><td>' + guest.comments + '</td></tr>';
+    	    			}
+  	        		});
+
+				finishPlaceCards();
+  	        	tableHTML+='</table>';
+  	        	$('#guests').html(tableHTML);
+ 	        },
+        	401:function( response ) {
+  	    		$('#guests').html("You must Login first");
+  	    	},
+    	    403:function( response ) {
+  	    		$('#guests').html("Access to the page forbidden");
+  	    	}
+    	    },
+  	    
+    	    error: function(jqXHR, textStatus, errorThrown) {
+      	        console.log("error " + textStatus);
+      	        console.log("incoming Text " + jqXHR.responseText);},
+    	    beforeSend: setHeader       
+    	  });
+   	  }
+  	  
+	function setHeader(xhr) {
+		  token = getCookie("token");
+		  xhr.setRequestHeader('Authorization', 'Bearer '+token );		  
+	}
+
+	$('#importbox').click(function (e) {
+                var file = $('#uploadfile').get(0).files[0];                
+                var uploadData = new FormData();
+                uploadData.append('file', file);
+                var postUrl = "/EagleEventPlanning/services/importguests/" + eventId;
+                $.ajax({
+	                url: postUrl,
+	                type: 'POST',
+	                data: uploadData,
+	                cache: false,
+	                contentType: false,
+	                processData: false,
+	                statusCode: {
+                        200: function(response) {
+                            alert(response.statusText);
+	                    }
+                    },
+    	    		beforeSend: setHeader    
+	            });
+    });
+	
+	$.urlParam = function(name){
+	    var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+	    if (results==null){
+	       return null;
+	    }
+	    else{
+	       return results[1] || 0;
+	    }
+	}
+
+
+	$('#testButton').click(function() {
+	    downloadData(fileName, placeCards);
+	});
+
+	$(document).ready(function() {
+	 	eventId = $.urlParam("id");
+        $("#eventId").val(eventId);
+   		$("#previous").click(function() {getPrevious()});
+   		$("#next").click(function() {getNext()});
+   		getCurrentUser();
+   		createTable(start);
+    })
+
+	function createPlaceCardsHeader() {
+    	placeCards = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
 		'<?mso-application progid="Word.Document"?>'+
 		'<pkg:package xmlns:pkg="http://schemas.microsoft.com/office/2006/xmlPackage">'+
 		'<pkg:part pkg:padding="512" pkg:contentType="application/vnd.openxmlformats-package.relationships+xml" pkg:name="/_rels/.rels">'+
@@ -99,11 +261,14 @@
 		'</pkg:part>'+
 		'<pkg:part pkg:contentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml" pkg:name="/word/document.xml">'+
 		'<pkg:xmlData>'+
-		'<w:document mc:Ignorable="w14 w15 w16se wp14" xmlns:wps="http://schemas.microsoft.com/office/word/2010/wordprocessingShape" xmlns:wne="http://schemas.microsoft.com/office/word/2006/wordml" xmlns:wpi="http://schemas.microsoft.com/office/word/2010/wordprocessingInk" xmlns:wpg="http://schemas.microsoft.com/office/word/2010/wordprocessingGroup" xmlns:w16se="http://schemas.microsoft.com/office/word/2015/wordml/symex" xmlns:w15="http://schemas.microsoft.com/office/word/2012/wordml" xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:w10="urn:schemas-microsoft-com:office:word" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:wp14="http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:am3d="http://schemas.microsoft.com/office/drawing/2017/model3d" xmlns:aink="http://schemas.microsoft.com/office/drawing/2016/ink" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:cx8="http://schemas.microsoft.com/office/drawing/2016/5/14/chartex" xmlns:cx7="http://schemas.microsoft.com/office/drawing/2016/5/13/chartex" xmlns:cx6="http://schemas.microsoft.com/office/drawing/2016/5/12/chartex" xmlns:cx5="http://schemas.microsoft.com/office/drawing/2016/5/11/chartex" xmlns:cx4="http://schemas.microsoft.com/office/drawing/2016/5/10/chartex" xmlns:cx3="http://schemas.microsoft.com/office/drawing/2016/5/9/chartex" xmlns:cx2="http://schemas.microsoft.com/office/drawing/2015/10/21/chartex" xmlns:cx1="http://schemas.microsoft.com/office/drawing/2015/9/8/chartex" xmlns:cx="http://schemas.microsoft.com/office/drawing/2014/chartex" xmlns:wpc="http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas">'+
-		'<w:body>'+
-		'<w:p w:rsidRDefault="00CF4182" w:rsidR="00297778">'+
-		'<w:bookmarkStart w:id="0" w:name="_GoBack"/>'+
-		'<w:bookmarkEnd w:id="0"/>'+
+		'<w:document mc:Ignorable="w14 w15 w16se w16cid wp14" xmlns:wps="http://schemas.microsoft.com/office/word/2010/wordprocessingShape" xmlns:wne="http://schemas.microsoft.com/office/word/2006/wordml" xmlns:wpi="http://schemas.microsoft.com/office/word/2010/wordprocessingInk" xmlns:wpg="http://schemas.microsoft.com/office/word/2010/wordprocessingGroup" xmlns:w16se="http://schemas.microsoft.com/office/word/2015/wordml/symex" xmlns:w15="http://schemas.microsoft.com/office/word/2012/wordml" xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:w10="urn:schemas-microsoft-com:office:word" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:wp14="http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:am3d="http://schemas.microsoft.com/office/drawing/2017/model3d" xmlns:aink="http://schemas.microsoft.com/office/drawing/2016/ink" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:cx8="http://schemas.microsoft.com/office/drawing/2016/5/14/chartex" xmlns:cx7="http://schemas.microsoft.com/office/drawing/2016/5/13/chartex" xmlns:cx6="http://schemas.microsoft.com/office/drawing/2016/5/12/chartex" xmlns:cx5="http://schemas.microsoft.com/office/drawing/2016/5/11/chartex" xmlns:cx4="http://schemas.microsoft.com/office/drawing/2016/5/10/chartex" xmlns:cx3="http://schemas.microsoft.com/office/drawing/2016/5/9/chartex" xmlns:cx2="http://schemas.microsoft.com/office/drawing/2015/10/21/chartex" xmlns:cx1="http://schemas.microsoft.com/office/drawing/2015/9/8/chartex" xmlns:cx="http://schemas.microsoft.com/office/drawing/2014/chartex" xmlns:wpc="http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas" xmlns:w16cid="http://schemas.microsoft.com/office/word/2016/wordml/cid">'+
+		'<w:body>';
+	}
+
+	function addPlaceCard() {
+		placeCards +='<w:p w:rsidRDefault="00CF4182" w:rsidR="00297778">';
+		placeCards += pageBreak;
+		placeCards +=
 		'<w:r>'+
 		'<w:rPr>'+
 		'<w:noProof/>'+
@@ -1145,7 +1310,11 @@
 		'</mc:Fallback>'+
 		'</mc:AlternateContent>'+
 		'</w:r>'+
-		'</w:p>'+
+		'</w:p>';
+	}
+
+	function finishPlaceCards() {
+		placeCards +=
 		'<w:sectPr w:rsidR="00297778">'+
 		'<w:pgSz w:w="12240" w:h="15840"/>'+
 		'<w:pgMar w:gutter="0" w:footer="720" w:header="720" w:left="1440" w:bottom="1440" w:right="1440" w:top="1440"/>'+
@@ -2057,200 +2226,6 @@
 		'</pkg:part>'+
 		'</pkg:package>';
 	}
-	
-	function getCookie(cname) {
-	    var name = cname + "=";
-	    var decodedCookie = decodeURIComponent(document.cookie);
-	    var ca = decodedCookie.split(';');
-	    for(var i = 0; i <ca.length; i++) {
-	        var c = ca[i];
-	        while (c.charAt(0) == ' ') {
-	            c = c.substring(1);
-	        }
-	        if (c.indexOf(name) == 0) {
-	            return c.substring(name.length, c.length);
-	        }
-	    }
-	    return "";
-	}
-	
-	function getPrevious()
-	{
-		start = start-page;
-		if (start <1)  start = 0;
-		createTable(start);
-	}
-	
-	function getNext()
-	{
-		if ($("#guests") && $("#guests").prop('rows').length-1 == page) start=start+page;
-		createTable(start);
-	}
-
-    function selectChange() 
-    {
-        id = getId();
-        $("#editId").val(id);
-        $("#deleteId").val(id);
-        
-        $.ajax({
-    	    url: "/EagleEventPlanning/services/guests/"+id,
-    	    type: 'GET',
-    	    datatype: 'json',
-    	    statusCode: {
-    	    200: function(response) {
-    	    	firstName = response.firstName;
-    	        lastName = response.lastName;
-    	        tableNumber = response.tableNumber;
-    	        fileName = "placecard" + firstName + lastName + ".xml";
-    	        updateContent();
-    	    	},
-    			
-    	    401:function( response ) {
-    	    		$('#page-messge').html("You must Login first");
-    	    		},
-    		403:function( response ) {
-      	    		$('#page-messge').html("Access to the page forbiden");
-      	    		}
-
-    	    		},
-    	    
-    	    error: function(jqXHR, textStatus, errorThrown) {
-      	        console.log("error " + textStatus);
-      	        console.log("incoming Text " + jqXHR.responseText);
-      	        },
-    	    beforeSend: setHeader   
-    	  });
-    }
-    
-    function getId()
-	{ 
-	  return jQuery( 'input[name=selectedRow]:checked' ).val()
-	}
-    
-    function getCurrentUser() {
-    	$.ajax({
-    	    url: "/EagleEventPlanning/services/employees/current",
-    	    type: 'GET',
-    	    datatype: 'json',
-    	    statusCode: {
-    	    200: function( planner ) {
-    	
-    			$('#userWelcome').html("Welcome, "+planner.name);
-    	    },
-    	    401:function( response ) {
-    	    		$('#guests').html("You must Login first");}
-    	    },
-    	    
-    	    error: function(jqXHR, textStatus, errorThrown) {
-      	        console.log("error " + textStatus);
-      	        console.log("incoming Text " + jqXHR.responseText);},
-    	    beforeSend: setHeader       
-    	  });   	
-    }
-  
-    function createTable(start) {
-
-    	$.ajax({
-    	    url: "/EagleEventPlanning/services/events/"+eventId+"/guests"+"?page="+start+"&per_page="+page,
-    	    type: 'GET',
-    	    datatype: 'json',
-    	    statusCode: {
-    	    200: function( response ) {    	    
-    	    	var first = true;
-    	    	var tableHTML = '<tr><th></th><th width= 100px>First Name</th><th width= 100px>Last Name</th><th width= 50px>Table</th><th width= 100px>Comments</th></tr>';
-    	    		$.each(response, function (i, guest) {
-    	    			if(first){
-    	    				first=false;
-    	    				tableHTML += '<tr><td><input type="radio" onchange= "selectChange()" name="selectedRow" value='+guest.guestId+' checked><td>' + guest.firstName + '</td><td>' + guest.lastName + '</td><td>' + guest.tableNumber + '</td><td>' + guest.comments + '</td></tr>';
-    	    				id = guest.guestId;
-    	    		        $("#editId").val(id);
-    	    		        $("#deleteId").val(id);
-    	    		        firstName = guest.firstName;
-    	        	        lastName = guest.lastName;
-    	        	        tableNumber = guest.tableNumber;
-    	        	        fileName = "placecard" + firstName + lastName + ".xml";
-    	        	        updateContent();
-    	    			} else {
-        	    			tableHTML += '<tr><td><input type="radio" onchange= "selectChange()" name="selectedRow" value='+guest.guestId+'><td>' + guest.firstName + '</td><td>' + guest.lastName + '</td><td>' + guest.tableNumber + '</td><td>' + guest.comments + '</td></tr>';
-    	    			}
-  	        		});
-  	        	tableHTML+='</table>';
-  	        	$('#guests').html(tableHTML);
- 	        },
-        	401:function( response ) {
-  	    		$('#guests').html("You must Login first");
-  	    	},
-    	    403:function( response ) {
-  	    		$('#guests').html("Access to the page forbidden");
-  	    	}
-    	    },
-  	    
-    	    error: function(jqXHR, textStatus, errorThrown) {
-      	        console.log("error " + textStatus);
-      	        console.log("incoming Text " + jqXHR.responseText);},
-    	    beforeSend: setHeader       
-    	  });
-   	  }
-  	  
-	function setHeader(xhr) {
-		  token = getCookie("token");
-		  xhr.setRequestHeader('Authorization', 'Bearer '+token );		  
-	}
-
-	$('#importbox').click(function (e) {
-                var file = $('#uploadfile').get(0).files[0];                
-                var uploadData = new FormData();
-                uploadData.append('file', file);
-                var postUrl = "/EagleEventPlanning/services/importguests/" + eventId;
-                $.ajax({
-	                url: postUrl,
-	                type: 'POST',
-	                data: uploadData,
-	                cache: false,
-	                contentType: false,
-	                processData: false,
-	                statusCode: {
-                        200: function(response) {
-                            alert(response.statusText);
-	                    }
-                    },
-    	    		beforeSend: setHeader    
-	            });
-    });
-	
-	$.urlParam = function(name){
-	    var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
-	    if (results==null){
-	       return null;
-	    }
-	    else{
-	       return results[1] || 0;
-	    }
-	}
-
-
-	$('#testButton').click(function() {
-		/*
-		// YOUR TEXT GOES HERE!
-		var textToSave = "<h1>Your ad here!</h1>";
-		//
-
-		var filename = "test.html";
-		downloadData(filename, textToSave);
-		*/
-
-	    downloadData(fileName, content);
-	});
-
-	$(document).ready(function() {
-	 	eventId = $.urlParam("id");
-        $("#eventId").val(eventId);
-   		$("#previous").click(function() {getPrevious()});
-   		$("#next").click(function() {getNext()});
-   		getCurrentUser();
-   		createTable(start);
-    })
 </script>
 </body>
 </html>
