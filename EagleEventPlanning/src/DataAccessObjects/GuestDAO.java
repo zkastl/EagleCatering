@@ -21,10 +21,9 @@ public class GuestDAO {
 		return query.getResultList();
 	}
 
-	public static List<Guest> getAllGuestsForEvent(long eventId, int start, int perPage) {
-		TypedQuery<Guest> query = EM.getEM().createQuery(
-				"SELECT guest FROM guest guest WHERE guest.eventID = '" + eventId + "' ORDER BY guest.lastName",
-				Guest.class);
+	public static List<Guest> getAllGuestsForEvent(long eventId, int start, int perPage, String orderBy) {
+		TypedQuery<Guest> query = EM.getEM().createQuery("SELECT guest FROM guest guest WHERE guest.eventID = '"
+				+ eventId + "' ORDER BY guest." + orderBy + ", guest.lastName", Guest.class);
 		List<Guest> guestList = query.setFirstResult(start).setMaxResults(perPage).getResultList();
 		return guestList;
 	}

@@ -57,6 +57,7 @@
 		<form>
 			<input class='inline' id='testButton' type='button' value='Create Place Cards' />
 		</form>
+			<input class='inline' id='sort' type='button' value='Sort By Table' />
 	</div>
 </div>
  
@@ -73,6 +74,7 @@
 	var placeCards = "";
 	var pageBreak = '<w:r><w:br w:type="page"/></w:r>';
 	var last = false;
+	var sortOrder = "lastName";
 	
 	function getCookie(cname) {
 	    var name = cname + "=";
@@ -139,7 +141,7 @@
     function createTable(start) {
 
     	$.ajax({
-    	    url: "/EagleEventPlanning/services/events/"+eventId+"/guests"+"?page="+start+"&per_page="+page,
+    	    url: "/EagleEventPlanning/services/events/"+eventId+"/guests"+"?page="+start+"&per_page="+page+"&order_by="+sortOrder,
     	    type: 'GET',
     	    datatype: 'json',
     	    statusCode: {
@@ -169,6 +171,7 @@
   	        		});
 
 				finishPlaceCards();
+				last = false;
   	        	tableHTML+='</table>';
   	        	$('#guests').html(tableHTML);
  	        },
@@ -223,6 +226,18 @@
 	    }
 	}
 
+	$('#sort').click(function() {
+		start = 0;
+		if(sortOrder == "lastName") {
+			sortOrder = "tableNumber";
+   			createTable(start);
+        	$("#sort").val("Sort by Last Name");
+		} else {
+			sortOrder = "lastName";
+   			createTable(start);	
+        	$("#sort").val("Sort by Table");
+		}
+	});
 
 	$('#testButton').click(function() {
 	    downloadData(fileName, placeCards);

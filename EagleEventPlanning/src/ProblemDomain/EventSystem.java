@@ -99,8 +99,8 @@ public class EventSystem {
 		return true;
 	}
 
-	public static List<Guest> findGuestsByEventId(long eventId, int page, int perPage) {
-		return GuestDAO.getAllGuestsForEvent(eventId, page, perPage);
+	public static List<Guest> findGuestsByEventId(long eventId, int page, int perPage, String orderBy) {
+		return GuestDAO.getAllGuestsForEvent(eventId, page, perPage, orderBy);
 	}
 
 	public static Boolean addGuest(Guest guest) {

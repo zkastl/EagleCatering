@@ -567,9 +567,10 @@ public class Services {
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Guest> getGuests(@PathParam("eventId") String eventId,
 			@DefaultValue("0") @QueryParam("page") String page,
-			@DefaultValue("15") @QueryParam("per_page") String perPage) {
+			@DefaultValue("15") @QueryParam("per_page") String perPage,
+			@DefaultValue("lastName") @QueryParam("order_by") String orderBy) {
 		return EventSystem.findGuestsByEventId(Long.parseLong(eventId), Integer.parseInt(page),
-				Integer.parseInt(perPage));
+				Integer.parseInt(perPage), orderBy);
 	}
 
 	@Secured

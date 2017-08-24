@@ -5,7 +5,6 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -185,11 +184,6 @@ public class Event implements Serializable {
 		return true;
 	}
 
-	public List<Guest> getAllGuests(int page, int perPage) {
-		List<Guest> tempGuestList = GuestDAO.getAllGuestsForEvent(this.eventId, page, perPage);
-		return tempGuestList;
-	}
-
 	public Integer getTableSize() {
 		return tableSize;
 	}
@@ -348,7 +342,7 @@ public class Event implements Serializable {
 		setEmptySeatsPerTable(event.emptySeatsPerTable);
 		setEventPlanner(event.eventPlanner);
 		setEventPlannerID(event.eventPlannerID);
-		//setId(event.eventId);
+		// setId(event.eventId);
 		setLocation(event.location);
 		setName(event.name);
 		setSeatingArrangement(event.seatingArrangement);
