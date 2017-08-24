@@ -109,7 +109,7 @@ public class EventSystem {
 	}
 
 	public static Guest findGuestById(String id) {
-		return GuestDAO.findGuestById(Long.parseLong(id));
+		return GuestDAO.findGuestById(Integer.parseInt(id));
 	}
 
 	public static Boolean removeGuest(Guest guest) {

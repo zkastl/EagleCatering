@@ -74,12 +74,14 @@ function getCurrentUser() {
 		<input class ='inline' id ='deletebtn' type="button" value="Delete">
 		
 		<form action="guestList.html" method ="get">
-			<input id="guestId" type="hidden" name="id" value=eventId />
+			<input id="eventId" type="hidden" name="id" value="" />
 			<button type="submit" >Cancel</button>
 		</form>
 	</div>
 </div>
-<script>	
+<script>
+	var eventId = -1;
+
 	$.urlParam = function(name){
     var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
     if (results==null){
@@ -93,7 +95,7 @@ function getCurrentUser() {
 $(document).ready(function() {
 	getCurrentUser();
 	$.ajax( { 
-		url:"/EagleEventPlanning/services/events/"+$.urlParam("eventId")+"/guests/"+$.urlParam("id"),
+		url:"/EagleEventPlanning/services/guests/"+$.urlParam("id"),
 		type: "GET",
 		dataType: "json",
 		contentType: "application/json",
@@ -101,6 +103,9 @@ $(document).ready(function() {
 		statusCode: {
 		200: function( response ) {
 			console.log(response)
+			eventId = response.eventID;
+    		$("#eventId").val(eventId);
+			
 			$('#deleteMessage').html("Delete record for: "+response.firstName+" " + response.lastName +"?");
 	  		},
 	  	401:function( response ) {
@@ -130,12 +135,12 @@ $("#deletebtn").click(function (e){
 	$('#deletebtn').attr("disabled", true);
 	
 	$.ajax({ 
-		url:"/EagleEventPlanning/services/events/"+$.urlParam("eventId")+"/guests/"+$.urlParam("id"),
+		url:"/EagleEventPlanning/services/guests/"+$.urlParam("id"),
 		type: "DELETE",
 		statusCode: {
 			200: function( response ) {
 				  console.log("Delete success ");
-				  window.location.assign("guestList.html?id="+$.urlParam("eventId"));},
+				  window.location.assign("guestList.html?id="+eventId);},
 		  	
 		  	401:function( response ) {
 		  		$('#deleteMessage').html("You must Login first");
@@ -145,7 +150,7 @@ $("#deletebtn").click(function (e){
 	  	    		},
 			404 : function(jqXHR, textStatus, errorThrown) {
 				$("#page-message").html("Error:"+textStatus);
-				consule.log(errorThrown);
+					console.log(errorThrown);
 			        console.log("error " + textStatus);
 			        console.log("incoming Text " + jqXHR.responseText);
 			    }

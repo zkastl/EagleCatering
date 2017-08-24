@@ -86,17 +86,31 @@ function getCurrentUser() {
    <input type="submit" name="submit" value="Save"> 
 </form>
 <form action="guestList.html" method ="get">
-	<input id="guestId" type="hidden" name="id" value='eventId' />
+	<input id="eventId" type="hidden" name="id" value="" />
 	<button type="submit" >Cancel</button>
 </form>
 </div>
 </div>
 </div>
 <script>
+var eventId = -1;
+
+$.urlParam = function(name){
+    var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+    if (results==null){
+       return null;
+    }
+    else{
+       return results[1] || 0;
+    }
+}
+	
 $(document).ready(function() {
 
+	eventId = $.urlParam("eventId");
+    $("#eventId").val(eventId);
 	getCurrentUser();
-	$("#employeeForm").submit(function (e){
+	$("#guestForm").submit(function (e){
 			
 			var firstName = $('#firstName').val();
 			var lastName= $('#lastName').val();
@@ -106,10 +120,11 @@ $(document).ready(function() {
 						'{'+  
 						'"firstName" :"'+ firstName +'",'+
 						'"lastName" : "'+lastName+'",'+
-						'"tableNumber" : "'+tableNumber+'"}';
+						'"tableNumber" : "'+tableNumber+'",'+
+						'"eventID" : "'+eventId+'"}';
 					
 			$.ajax( { 
-				url:"/EagleEventPlanning/services/events/"+$.urlParam("eventId")+"/guests/"+$.urlParam("id"),
+				url:"/EagleEventPlanning/services/guests",
 				type: "POST",
 				dataType: "json",
 				contentType: "application/json",
@@ -117,7 +132,7 @@ $(document).ready(function() {
 			statusCode: {
 				200: function(response) {
 					  $("#page-message").html("Record Added");
-					  window.location.assign("guestList.html?id="+$.urlParam("eventId"));
+					  window.location.assign("guestList.html?id="+eventId);
 			  		},
 			  	401:function( response ) {
 		    			$('#page-messge').html("You must Login first");
