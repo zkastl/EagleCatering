@@ -15,6 +15,8 @@ import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import DataAccessObjects.EventDAO;
+
 @XmlRootElement(name = "guest")
 @Entity(name = "guest")
 public class Guest implements Serializable {
@@ -115,7 +117,15 @@ public class Guest implements Serializable {
 	}
 
 	public ArrayList<Message> validate() {
-		// TODO Auto-generated method stub
+		if (notSameTable == null)
+			notSameTable = new ArrayList<Integer>();
+		if (sameTable == null)
+			sameTable = new ArrayList<Integer>();
+		if (comments == null)
+			comments = "";
+		if (event == null)
+			event = EventDAO.findEventById(eventID);
+
 		return null;
 	}
 
