@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import DataAccessObjects.EventDAO;
 
@@ -43,6 +44,7 @@ public class Guest implements Serializable {
 	public List<Integer> notSameTable;
 
 	@Transient
+	@XmlTransient
 	public Table assignedTable;
 
 	@Column(name = "tableNumber")
