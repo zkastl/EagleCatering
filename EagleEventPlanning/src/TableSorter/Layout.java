@@ -173,8 +173,9 @@ public class Layout implements Comparable<Layout> {
 		for(Table table : tableList) {
 			int t = 0;
 			for(Guest guest : table.seatedGuests){
-				t += 10000 * table.seatedGuests.stream().filter(x -> guest.sameTable.contains(x.guestNumber)).count();
-				//t -= 10 * table.seatedGuests.stream().filter(x -> guest.notSameTable.contains(x.guestNumber)).count();
+				t += 100 * table.seatedGuests.stream().filter(x -> guest.sameTable.contains(x.guestNumber)).count();
+				t += 1000 * table.seatedGuests.stream().filter(x -> x.lastName.equals(guest.lastName) && x.firstName.equals(guest.firstName)).count();
+				t -= 10 * table.seatedGuests.stream().filter(x -> guest.notSameTable.contains(x.guestNumber)).count();
 			}
 			tableScores[index] = t;
 			index++;
