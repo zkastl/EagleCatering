@@ -86,7 +86,7 @@ function getCurrentUser() {
    <input type="submit" name="submit" value="Save"> 
 </form>
 <form action="guestList.html" method ="get">
-	<input id="guestId" type="hidden" name="id" value=eventId />
+	<input id="eventId" type="hidden" name="id" value="" />
 	<button type="submit" >Cancel</button>
 </form>
 </div>
@@ -107,18 +107,19 @@ $.urlParam = function(name){
 
 $(document).ready(function() {
 	getCurrentUser();
-	eventId = $.urlParam("id");
 	
 	$.ajax({
-	    url: "/EagleEventPlanning/services/events/"+$.urlParam("eventId")+"/guests/"+$.urlParam("id"),
+	    url: "/EagleEventPlanning/services/guests/"+$.urlParam("id"),
 	    type: 'GET',
 	    datatype: 'json',
 	    statusCode: {
 	    200: function(response) {
+	    	eventId = response.eventID;
+    		$("#eventId").val(eventId);
     		$('#id').val(response.guestId);
 			$('#firstName').val(response.firstName);
 			$('#lastName').val(response.lastName);
-			$('#tableNumber').val(response.assignedTable.tableNumber);
+			$('#tableNumber').val(response.tableNumber);
 			},
 			
 	    401:function( response ) {
@@ -137,7 +138,7 @@ $(document).ready(function() {
 	    beforeSend: setHeader   
 	  }); 
 	
-	$("#employeeForm").submit(function (e){
+	$("#guestForm").submit(function (e){
 			
 			var firstName = $('#firstName').val();
 			var lastName= $('#lastName').val();
@@ -150,7 +151,7 @@ $(document).ready(function() {
 						'"tableNumber" : "'+tableNumber+'"}';
 					
 			$.ajax( { 
-				url:"/EagleEventPlanning/services/events/"+$.urlParam("eventId")+"/guests/"+$.urlParam("id"),
+				url:"/EagleEventPlanning/services/guests/"+$.urlParam("id"),
 				type: "PUT",
 				dataType: "json",
 				contentType: "application/json",
@@ -158,7 +159,7 @@ $(document).ready(function() {
 			statusCode: {
 				200: function(response) {
 					  $("#page-message").html("Record Updated");
-					  window.location.assign("guestList.html?id="+$.urlParam("eventId"));
+					  window.location.assign("guestList.html?id="+eventId);
 			  		},
 			  	401:function( response ) {
 		    			$('#page-messge').html("You must Login first");

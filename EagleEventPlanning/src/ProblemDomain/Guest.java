@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "guest")
@@ -98,6 +99,15 @@ public class Guest implements Serializable {
 
 	public void assignTable(int tableNumber) {
 		this.tableNumber = tableNumber;
+	}
+
+	@XmlElement
+	public int getGuestId() {
+		return this.guestId;
+	}
+
+	public int setGuestId() {
+		return this.guestId;
 	}
 
 	public String getName() {
