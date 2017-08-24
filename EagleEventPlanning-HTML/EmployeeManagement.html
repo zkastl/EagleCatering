@@ -125,17 +125,17 @@
     	    datatype: 'json',
     	    statusCode: {
     	    200: function( response ) { 
-    	    	var tableHTML = '<tr><th></th><th width= 50px>ID</th><th width= 100px>Name</th></tr>';   	   
+    	    	var tableHTML = '<tr><th></th><th width= 100px>Name</th><th width= 100px>Email</th></tr>';   	   
     	    	var first = true;
     	    		$.each(response, function (i, eventplanner) {
     	    			if(first) {
-    	    				tableHTML += '<tr><td><input type="radio" onchange= "selectChange()" name="selectedRow" value='+eventplanner.eventPlannerId+' checked><td>' + eventplanner.eventPlannerId + '</td><td>' + eventplanner.name + '</td></tr>';
+    	    				tableHTML += '<tr><td><input type="radio" onchange= "selectChange()" name="selectedRow" value='+eventplanner.eventPlannerId+' checked><td>' + eventplanner.name + '</td><td>' + eventplanner.email + '</td></tr>';
     	    				first = false;
     	    				id = eventplanner.eventPlannerId;
     	    		        $("#editId").val(id);
     	    		        $("#deleteId").val(id);
     	    			} else {
-        	    			tableHTML += '<tr><td><input type="radio" onchange= "selectChange()" name="selectedRow" value='+eventplanner.eventPlannerId+'><td>' + eventplanner.eventPlannerId + '</td><td>' + eventplanner.name + '</td></tr>';
+        	    			tableHTML += '<tr><td><input type="radio" onchange= "selectChange()" name="selectedRow" value='+eventplanner.eventPlannerId+'><td>' + eventplanner.name + '</td><td>' + eventplanner.email + '</td></tr>';
     	    			}
   	        		});
   	        	tableHTML+='</table>';

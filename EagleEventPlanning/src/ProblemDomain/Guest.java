@@ -123,7 +123,7 @@ public class Guest implements Serializable {
 			sameTable = new ArrayList<Integer>();
 		if (comments == null)
 			comments = "";
-		if (event == null) {
+		if (event == null && eventID > 0) {
 			EventDAO.findEventById(eventID).addGuest(this);
 		}
 
@@ -134,6 +134,7 @@ public class Guest implements Serializable {
 		this.firstName = guest.firstName;
 		this.lastName = guest.lastName;
 		this.tableNumber = guest.tableNumber;
+		this.comments = guest.comments;
 
 		return true;
 	}

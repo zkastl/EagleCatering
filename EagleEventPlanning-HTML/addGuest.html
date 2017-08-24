@@ -82,6 +82,8 @@ function getCurrentUser() {
    Table #: <input type="text" id="tableNumber" >
    <span id="tableErr" class="error">* </span>
    <br><br>
+   Comments: <input type="text" id="comments">
+	<br><br>
 	<br><br>
    <input type="submit" name="submit" value="Save"> 
 </form>
@@ -115,12 +117,14 @@ $(document).ready(function() {
 			var firstName = $('#firstName').val();
 			var lastName= $('#lastName').val();
 			var tableNumber = $('#tableNumber').val();
+			var comments = $('#comments').val();
 
 			var jsonData = 
 						'{'+  
 						'"firstName" :"'+ firstName +'",'+
 						'"lastName" : "'+lastName+'",'+
 						'"tableNumber" : "'+tableNumber+'",'+
+						'"comments" : "'+comments+'",'+
 						'"eventID" : "'+eventId+'"}';
 					
 			$.ajax( { 

@@ -633,7 +633,7 @@ public class Services {
 	@Path("/guests/{guestId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public ArrayList<Message> udpateGuest(Guest guest, @PathParam("guestId") String id,
+	public ArrayList<Message> updateGuest(Guest guest, @PathParam("guestId") String id,
 			@Context final HttpServletResponse response) throws IOException {
 		Guest oldGuest = EventSystem.findGuestById(id);
 		if (oldGuest == null) {
