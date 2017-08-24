@@ -123,8 +123,9 @@ public class Guest implements Serializable {
 			sameTable = new ArrayList<Integer>();
 		if (comments == null)
 			comments = "";
-		if (event == null)
-			event = EventDAO.findEventById(eventID);
+		if (event == null) {
+			EventDAO.findEventById(eventID).addGuest(this);
+		}
 
 		return null;
 	}
