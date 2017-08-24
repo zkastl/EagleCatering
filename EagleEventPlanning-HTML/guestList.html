@@ -72,7 +72,7 @@
 	var fileName = "placecards.xml";
 	var placeCards = "";
 	var pageBreak = '<w:r><w:br w:type="page"/></w:r>';
-	var first = true;
+	var last = false;
 	
 	function getCookie(cname) {
 	    var name = cname + "=";
@@ -145,9 +145,13 @@
     	    statusCode: {
     	    200: function( response ) {
 				createPlaceCardsHeader();    	    
-    	    	first = true;
+    	    	var first = true;
+				var count = response.length;
+
     	    	var tableHTML = '<tr><th></th><th width= 100px>First Name</th><th width= 100px>Last Name</th><th width= 50px>Table</th><th width= 100px>Comments</th></tr>';
     	    		$.each(response, function (i, guest) {
+    	    			if (i == count - 1) last = true;
+
 						firstName = guest.firstName;
 						lastName = guest.lastName;
 						tableNumber = guest.tableNumber;
@@ -267,7 +271,7 @@
 
 	function addPlaceCard() {
 		placeCards +='<w:p w:rsidRDefault="00CF4182" w:rsidR="00297778">';
-		placeCards += pageBreak;
+		if (!last) placeCards += pageBreak;
 		placeCards +=
 		'<w:r>'+
 		'<w:rPr>'+
