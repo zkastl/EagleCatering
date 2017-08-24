@@ -110,7 +110,7 @@ $(document).ready(function() {
   	    		},
 		404 : function(jqXHR, textStatus, errorThrown) {
 			$("#deleteMessage").html("Error:"+textStatus);
-			consule.log(errorThrown);
+				console.log(errorThrown);
 		        console.log("error " + textStatus);
 		        console.log("incoming Text " + jqXHR.responseText);
 		     }

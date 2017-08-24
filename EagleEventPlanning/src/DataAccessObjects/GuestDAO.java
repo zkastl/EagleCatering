@@ -24,14 +24,15 @@ public class GuestDAO {
 	public static List<Guest> getAllGuestsForEvent(long eventId, int start, int perPage) {
 		TypedQuery<Guest> query = EM.getEM()
 				.createQuery("SELECT guest FROM guest guest WHERE guest.eventID = '" + eventId + "'", Guest.class);
-		return query.setFirstResult(start).setMaxResults(perPage).getResultList();
+		List<Guest> guestList = query.setFirstResult(start).setMaxResults(perPage).getResultList();
+		return guestList;
 	}
 
 	public static void saveGuest(Guest guest) {
 		EM.getEM().persist(guest);
 	}
 
-	public static Guest findGuestById(long id) {
+	public static Guest findGuestById(int id) {
 		Guest guest = EM.getEM().find(Guest.class, id);
 		return guest;
 	}

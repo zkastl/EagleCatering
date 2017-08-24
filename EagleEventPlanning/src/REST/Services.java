@@ -137,7 +137,7 @@ public class Services {
 		return EventSystem.findAllEventPlanners(Integer.parseInt(page), Integer.parseInt(perPage));
 	}
 
-	@Secured({ Role.Admin })
+	@Secured
 	@GET
 	@Path("/employees/{id}")
 	@Produces(MediaType.APPLICATION_JSON)

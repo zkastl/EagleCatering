@@ -41,7 +41,6 @@
 
 		<br><br>
 		<form class='inline' action="editGuest.html" method="get">
-			<input id="eventId" type="hidden" name="eventId" value="">
 			<input id="editId" type="hidden" name="id" value="">
 		    <input type="submit" value="Edit">
 		</form>
@@ -51,7 +50,6 @@
 			<input type="submit" value="Add">
 		</form>
 		<form class='inline' action="deleteGuest.html" method="get">
-			<input id="eventId" type="hidden" name="eventId" value="">
 			<input id="deleteId" type="hidden" name="id" value="">
 		    <input type="submit" value="Delete">
 		</form>
@@ -66,7 +64,8 @@
 
 	var start = 0;
 	var page = 15;
-
+	var id = -1;
+	var eventId = -1;
 	
 	function getCookie(cname) {
 	    var name = cname + "=";
@@ -133,14 +132,14 @@
     function createTable(start) {
 
     	$.ajax({
-    	    url: "/EagleEventPlanning/services/events/"+$.urlParam("id")+"/guests"+"?page="+start+"&per_page="+page,
+    	    url: "/EagleEventPlanning/services/events/"+eventId+"/guests"+"?page="+start+"&per_page="+page,
     	    type: 'GET',
     	    datatype: 'json',
     	    statusCode: {
     	    200: function( response ) {    	    	
     	    	var tableHTML = '<tr><th></th><th width= 50px>ID</th><th width= 100px>First Name</th><th width= 100px>Last Name</th><th width= 50px>Table</th></tr>';
     	    		$.each(response, function (i, guest) {
-    	    			tableHTML += '<tr><td><input type="radio" onchange= "selectChange()" name="selectedRow" value='+guest.guestNumber+'><td>' + guest.guestNumber + '</td><td>' + guest.firstName + '</td><td>' + guest.lastName + '</td><td>' + guest.tableNumber + '</td></tr>';
+    	    			tableHTML += '<tr><td><input type="radio" onchange= "selectChange()" name="selectedRow" value='+guest.guestId+'><td>' + guest.guestNumber + '</td><td>' + guest.firstName + '</td><td>' + guest.lastName + '</td><td>' + guest.tableNumber + '</td></tr>';
   	        		});
   	        	tableHTML+='</table>';
   	        	$('#guests').html(tableHTML);
@@ -166,11 +165,10 @@
 	}
 
 	$('#importbox').click(function (e) {
-                var id = $.urlParam("id");
                 var file = $('#uploadfile').get(0).files[0];                
                 var uploadData = new FormData();
                 uploadData.append('file', file);
-                var postUrl = "/EagleEventPlanning/services/importguests/" + id;
+                var postUrl = "/EagleEventPlanning/services/importguests/" + eventId;
                 $.ajax({
 	                url: postUrl,
 	                type: 'POST',
@@ -209,10 +207,12 @@
 	});
 
 	$(document).ready(function() {
-    		$("#previous").click(function() {getPrevious()});
-    		$("#next").click(function() {getNext()});
-    		getCurrentUser();
-    		createTable(start);
+	 	eventId = $.urlParam("id");
+        $("#eventId").val(eventId);
+   		$("#previous").click(function() {getPrevious()});
+   		$("#next").click(function() {getNext()});
+   		getCurrentUser();
+   		createTable(start);
     })
 </script>
 </body>

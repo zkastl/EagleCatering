@@ -12,7 +12,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import DataAccessObjects.EventDAO;
 
 @XmlRootElement(name = "guest")
 @Entity(name = "guest")
@@ -100,12 +103,29 @@ public class Guest implements Serializable {
 		this.tableNumber = tableNumber;
 	}
 
+	@XmlElement
+	public int getGuestId() {
+		return this.guestId;
+	}
+
+	public int setGuestId() {
+		return this.guestId;
+	}
+
 	public String getName() {
 		return this.firstName + " " + this.lastName;
 	}
 
 	public ArrayList<Message> validate() {
-		// TODO Auto-generated method stub
+		if (notSameTable == null)
+			notSameTable = new ArrayList<Integer>();
+		if (sameTable == null)
+			sameTable = new ArrayList<Integer>();
+		if (comments == null)
+			comments = "";
+		if (event == null)
+			event = EventDAO.findEventById(eventID);
+
 		return null;
 	}
 
