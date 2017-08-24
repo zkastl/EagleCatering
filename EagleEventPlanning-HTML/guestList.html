@@ -15,7 +15,6 @@
 		<td><a href="MainPage.html">Home</a></td>
 		<td><a href="contactinfo.html">Contact</a></td>
 		<td><a href="events.html">Events</a></td>
-		<td><a href="import.html">Import</a></td>	
 		<td><a href="ClientManagement.html">Clients</a></td>
 		<td><a href="EmployeeManagement.html">Employees</a></td>
 		<td><a href="logout.html">Logout</a></td>
@@ -166,10 +165,10 @@
 	}
 
 	$('#importbox').click(function (e) {
+                var id = $.urlParam("id");
                 var file = $('#uploadfile').get(0).files[0];                
                 var uploadData = new FormData();
                 uploadData.append('file', file);
-                var id = $.urlParam("id");
                 var postUrl = "/EagleEventPlanning/services/importguests/" + id;
                 $.ajax({
 	                url: postUrl,
