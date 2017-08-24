@@ -5,6 +5,7 @@
 <title>Eagle Event Planning</title>
 <link rel="stylesheet" type="text/css" href="style.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script src='js/download.js'></script>
 </head>
 <body>
 
@@ -33,6 +34,11 @@
 		<button id = "next" class='inline' >Next</button>
 		<br><br>
 		
+		<form class='inline' id='importform' method="post">
+            <input id="uploadfile" type="file" accept=".csv" />
+            <input id='importbox' type="submit" value="Import Guests" />
+        </form>
+
 		<br><br>
 		<form class='inline' action="editGuest.html" method="get">
 			<input id="eventId" type="hidden" name="eventId" value="">
@@ -49,15 +55,10 @@
 			<input id="deleteId" type="hidden" name="id" value="">
 		    <input type="submit" value="Delete">
 		</form>
-		<form id='importform' method="post">
-                <fieldset>
-                    <div style="margin:auto;">
-                        <legend>Guest List Import</legend>
-                        <input id="uploadfile" type="file" accept=".csv" />
-                        <input id='importbox' type="submit" value="Upload" />
-                    </div>
-                </fieldset>
-        </form>
+		<br><br>		
+		<form>
+			<input class='inline' id='testButton' type='button' value='Print Guests' />
+		</form>
 	</div>
 </div>
  
@@ -195,6 +196,17 @@
 	       return results[1] || 0;
 	    }
 	}
+
+
+	$('#testButton').click(function() {
+
+		// YOUR TEXT GOES HERE!
+		var textToSave = "<h1>Your ad here!</h1>";
+		//
+
+		var filename = "test.html";
+		downloadData(filename, textToSave);
+	});
 
 	$(document).ready(function() {
     		$("#previous").click(function() {getPrevious()});

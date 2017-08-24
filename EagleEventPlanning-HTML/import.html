@@ -1,100 +1,29 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="ISO-8859-1">
-<title>Eagle Event Planning</title>
-<link rel="stylesheet" type="text/css" href="style.css">
-<script src="js/jquery-3.2.1.min.js"></script>
-</head>
-<body>
-<script src='js/common.js'>
-</script>
-<h1>Eagle Event Planning</h1>
-<div style="color: white; background: gray; width: 100%; font-size: 12;">
-<table class="nav">
-	<tr>
-		<td><a href="MainPage.html">Home</a></td>
-		<td><a href="contactinfo.html">Contact</a></td>
-		<td><a href="events.html">Events</a></td>
-		<td><a href="ClientManagement.html">Clients</a></td>
-		<td><a href="EmployeeManagement.html">Employees</a></td>
-		<td><a href="logout.html">Logout</a></td>
-		<td id="userWelcome" style="text-align: right; width: 100%"></td>
-	</tr>
-	</table>
-</div>
-        <div id='bodydiv' style="margin:auto;
-                            background-color:white;
-                            padding:10px;
-                            transform: translate(0px, 25px);
-                            max-width:370px;
-                            border-style:solid;
-                            border-width:2px;">
-            
-            <form id='testform' method="post">
-                <fieldset>
-                    <div style="margin:auto;">
-                        <legend>Guest List Import</legend>
-                        <input id="uploadfile" type="file" accept=".csv" />
-                        <input id='submitbox' type="submit" value="Upload" />
-                        <br /><span id="uploaderror" class="error"></span>
-                    </div>
-                </fieldset>
-            </form>
-        </div>
+	<head>
+		<meta charset="ISO-8859-1">
+		<title>Eagle Event Planning</title>
+		<script src="js/jquery-3.2.1.min.js"></script>
+		<script src="js/download.js"></script>
+	</head>
+	<body>
+		<div id='testuridiv'>
+			<form>
+				<input id='testButton' type='button' value='save stuff' />
+			</form>
+		</div>
 	</body>
-	<script>
-        $(document).ready(function () {
-        getCurrentUser();
-        
-            var getUrl = "/EagleEventPlanning/services/import";
-            $('#gobox').click(function () {
-                $.ajax({
-                    url: getUrl,
-                    type: 'GET',
-                    complete: function(jqXHR, data) {
-                        switch(jqXHR.status) {
-                            case 200:
-                                console.log("200 Received!\n" + jqXHR.statusText);
-                                break;
-                            default:
-                                alert(jqXHR.status.toString() + " " + jqXHR.statusText);
-                                break;
-                        }
-                    },
-                    success: function(data, textStatus, jqXHR) {
-                        console.log(data);
-                    },
-    	    		beforeSend: setHeader
-                });
-            });
-            $('#submitbox').click(function (e) {
-                console.log("uploading...");
-                var file = $('#uploadfile').get(0).files[0];                
-                var uploadData = new FormData();
-                uploadData.append('file', file);
-                var id = 1;//localStorage.event;
-                var postUrl = "/EagleEventPlanning/services/import/" + id + "/uploadfile";
-                $.ajax({
-	                url: postUrl,
-	                type: 'POST',
-	                data: uploadData,
-	                cache: false,
-	                contentType: false,
-	                processData: false,
-	                statusCode: {
-                        200: function(response) {
-                            alert(response.statusText);
-	                    }
-                    },
-    	    		beforeSend: setHeader    
-	            });
-            });
-            
-	function setHeader(xhr) {
-		  token = getCookie("token");
-		  xhr.setRequestHeader('Authorization', 'Bearer '+token );		  
-	};
-        });
-    </script>
+	<script type='text/javascript'>
+		$('#testButton').click(function() {
+
+			// YOUR HTML GOES HERE!
+			var textToSave = "<h1>Your ad here!</h1>";
+
+			// THIS IS YOUR FILENAME
+			var filename = "test.html";
+
+			// RUN THIS FUNCTION!
+			downloadData(filename, textToSave);
+		});
+	</script>
 </html>
